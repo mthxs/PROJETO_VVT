@@ -1,0 +1,22 @@
+name: Teste  # Nome do workflow
+
+on:
+  push:
+    branches:
+      - main  # Dispara o workflow ao fazer push na branch main
+
+jobs:
+  run-python-script:  executar_py
+    runs-on: ubuntu-latest  # Ambiente de execução (Ubuntu)
+
+    steps:
+      - name: Checkout do código  # Etapa 1: Fazer checkout do código do repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Python  # Etapa 2: Instalar e configurar o Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Escolher a versão desejada do Python
+
+      - name: Executar Script Python  # Etapa 3: Rodar o arquivo .py
+        run: python nome_do_script.py  # Substituir pelo nome do arquivo Python no repositório
