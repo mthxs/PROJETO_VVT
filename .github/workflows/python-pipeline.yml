@@ -19,4 +19,4 @@ jobs:
           python-version: '3.x'  # Escolher a versão desejada do Python
 
       - name: Executar Script Python  # Etapa 3: Rodar o arquivo .py
-        run: python nome_do_script.py  # Substituir pelo nome do arquivo Python no repositório
+        run: python teste.py  # Substituir pelo nome do arquivo Python no repositório
