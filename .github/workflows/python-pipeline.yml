@@ -6,7 +6,7 @@ on:
       - main  # Dispara o workflow ao fazer push na branch main
 
 jobs:
-  run-python-script:  executar_py
+  run-python-script: # executar_py
     runs-on: ubuntu-latest  # Ambiente de execução (Ubuntu)
 
     steps:
