@@ -17,6 +17,14 @@
           background-color: #0A0C1A;
           border: none !important;
         }
+        .categoria-titulo {
+          color: #ffffff; /* Substitua pela cor desejada */
+          font-size: 20px; /* Ajuste o tamanho */
+          font-weight: bold; /* Deixa o texto em negrito */
+          margin: 10px 0; /* Adiciona espaçamento acima e abaixo */
+          margin-left: 10px;
+        }
+
         .nav-extended {
           background-color: #0c0a33;
           padding: 0 !important;
@@ -60,6 +68,12 @@
         .card-content p {
             color: #ffffff; /* Substitua #yourColor pela cor desejada */
         }
+        body {
+        background-color: #0A0C1A; /* Alterar para a cor desejada */
+        }
+        .tab a.active{
+          border-bottom: solid 2px #fff;
+        }
      </style>
 </head>
 <body>
@@ -67,12 +81,12 @@
   <nav class="nav-extended">
     <div class="nav-wrapper">
         <ul id="nav-mobile" class="right">
-            <li><a href="catalogo.html">Catálogo</a></li>
+            <li><a href="index.html">Catálogo</a></li>
             <li><a href="cadastrarfilme.html">Cadastrar</a></li>
         </ul>
     </div>
     <div class="nav-header center">
-        <img src="images/logo_galax.png" alt="Galax Video Logo">
+        <img src="static/images/logo_galax.png" alt="Galax Video Logo">
 </div>    
     <div class="nav-content">
       <ul class="tabs tabs-transparent">
@@ -83,8 +97,8 @@
       </ul>
     </div>
   </nav>
-  
-  <div class="row">
+  <div class="row row-lancamentos">
+    <h3 class="categoria-titulo">Lançamentos</h3>
     <div class="col s2">
         <div class="card hoverable">
             <div class="card-image">
@@ -120,7 +134,59 @@
           </div>
     </div>
   </div>
+  <div class="row row-acao">
+    <h3 class="categoria-titulo">Ação</h3>
   
+  </div>
+  <script>
+    function carregarFilmes() {
+        fetch('http://localhost:5000/filmes') // Endpoint da API
+            .then(response => response.json())
+            .then(filmes => {
+                const rowLancamentos = document.querySelector('.row-lancamentos');
+                const rowAcao = document.querySelector('.row-acao');
+
+
+                filmes.forEach(filme => {
+                    const cardHTML = `
+                        <div class="col s2">
+                            <div class="card hoverable">
+                                <div class="card-image">
+                                    <img src="${filme.imagem}">
+                                    <a class="btn-floating halfway-fab waves-effect waves-light red">
+                                        <i class="material-icons">favorite_border</i>
+                                    </a>
+                                </div>
+                                <div class="card-content">
+                                    <span class="card-title">${filme.nomeFilme}</span>
+                                    <p class="valign-wrapper">
+                                        <i class="material-icons amber-text">star</i> ${filme.nota}
+                                    </p>
+                                    <p>${filme.sinopse}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    rowLancamentos.insertAdjacentHTML('beforeend', cardHTML);
+                    
+
+                    // Adiciona o card também na categoria "Ação", se aplicável
+                    if (filme.Categoria.includes('Ação') && rowAcao) {
+                        rowAcao.insertAdjacentHTML('beforeend', cardHTML);
+                    }
+
+
+                    
+                });
+            })
+            .catch(error => console.error('Erro ao buscar filmes:', error)); // Tratamento de erro
+    }
+
+    window.onload = carregarFilmes;
+
+</script>
+
 
 </body>
 </html>
