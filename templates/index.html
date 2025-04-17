@@ -17,6 +17,7 @@
           background-color: #0A0C1A;
           border: none !important;
         }
+        
         .categoria-titulo {
           color: #ffffff; /* Substitua pela cor desejada */
           font-size: 20px; /* Ajuste o tamanho */
@@ -47,6 +48,9 @@
         }
 
         .card{
+          min-width: 300px; 
+          max-width: 320px; /* Deixa os cards menores */
+          height: auto;
             background-color:#040336;
         }
         .card.hoverable:hover {
@@ -74,6 +78,55 @@
         .tab a.active{
           border-bottom: solid 2px #fff;
         }
+        .row-container {
+        position: relative;
+        width: 100%;
+        margin: 20px 0;
+       }
+
+    .rowContent {
+        display: flex;
+        align-items: center;
+        position: relative;
+        }
+    .row-container {
+          min-height: 680px;
+      }
+    .slider {
+      min-height: 680px;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        white-space: nowrap;
+        padding: 10px;
+        }
+
+    .slider::-webkit-scrollbar {
+        display: none;
+        }
+
+    .slider-arrow {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .slider-arrow.left {
+        left: 0;
+    }
+
+    .slider-arrow.right {
+        right: 0;
+    }
+
+    .slider-arrow i {
+        font-size: 24px;
+    }
      </style>
 </head>
 <body>
@@ -82,7 +135,7 @@
     <div class="nav-wrapper">
         <ul id="nav-mobile" class="right">
             <li><a href="index.html">Catálogo</a></li>
-            <li><a href="cadastrarfilme.html">Cadastrar</a></li>
+            <li><a href="/cadastrarfilme">Cadastrar</a></li>
         </ul>
     </div>
     <div class="nav-header center">
@@ -97,95 +150,137 @@
       </ul>
     </div>
   </nav>
-  <div class="row row-lancamentos">
+  <div class="row-container">
     <h3 class="categoria-titulo">Lançamentos</h3>
-    <div class="col s2">
-        <div class="card hoverable">
-            <div class="card-image">
-                <img src="https://image.tmdb.org/t/p/original/cndTOswQBdDVkWwY5NKZaH7Xvux.jpg">
-                <a class="btn-floating halfway-fab waves-effect waves-light red">
-                    <i class="material-icons">favorite_border</i>
-                </a>
-            </div>
-            <div class="card-content">
-                <span class="card-title">os vingas</span>
-                <p class="valign-wrapper">
-                    <i class="material-icons amber-text">star</i> 9,7
-                </p>
-                <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
-            </div>
-          </div>
-    </div>
-    <div class="col s2">
-        <div class="card hoverable">
-            <div class="card-image">
-                <img src="https://image.tmdb.org/t/p/original/cndTOswQBdDVkWwY5NKZaH7Xvux.jpg">
-                <a class="btn-floating halfway-fab waves-effect waves-light red">
-                    <i class="material-icons">favorite_border</i>
-                </a>
-            </div>
-            <div class="card-content">
-                <span class="card-title">Os Vingadores</span>
-                <p class="valign-wrapper">
-                    <i class="material-icons amber-text">star</i> 9,7
-                </p>
-                <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
-            </div>
-          </div>
+    <div class="rowContent">
+        <button class="slider-arrow left" onclick="scrollSlider('slider-lancamentos', 'left')">
+            <i class="material-icons">chevron_left</i>
+        </button>
+
+        <div class="slider" id="slider-lancamentos">
+            <!-- Filmes serão adicionados aqui dinamicamente -->
+        </div>
+
+        <button class="slider-arrow right" onclick="scrollSlider('slider-lancamentos', 'right')">
+            <i class="material-icons">chevron_right</i>
+        </button>
     </div>
   </div>
-  <div class="row row-acao">
+  </div>
+  <div class="row-container">
     <h3 class="categoria-titulo">Ação</h3>
-  
+    <div class="rowContent">
+        <button class="slider-arrow left" onclick="scrollSlider('slider-acao', 'left')">
+            <i class="material-icons">chevron_left</i>
+        </button>
+
+        <div class="slider" id="slider-acao">
+            <!-- Filmes serão adicionados aqui dinamicamente -->
+        </div>
+
+        <button class="slider-arrow right" onclick="scrollSlider('slider-acao', 'right')">
+            <i class="material-icons">chevron_right</i>
+        </button>
+    </div>
+  </div>
+  <div class="row-container">
+    <h3 class="categoria-titulo">Comédia</h3>
+    <div class="rowContent">
+        <button class="slider-arrow left" onclick="scrollSlider('slider-comedia', 'left')">
+            <i class="material-icons">chevron_left</i>
+        </button>
+
+        <div class="slider" id="slider-comedia">
+            <!-- Filmes serão adicionados aqui dinamicamente -->
+        </div>
+
+        <button class="slider-arrow right" onclick="scrollSlider('slider-comedia', 'right')">
+            <i class="material-icons">chevron_right</i>
+        </button>
+    </div>
   </div>
   <script>
-    function carregarFilmes() {
-        fetch('http://localhost:5000/filmes') // Endpoint da API
-            .then(response => response.json())
-            .then(filmes => {
-                const rowLancamentos = document.querySelector('.row-lancamentos');
-                const rowAcao = document.querySelector('.row-acao');
+      function carregarFilmes() {
+    fetch('http://localhost:5000/filmes') 
+        .then(response => response.json())
+        .then(filmes => {
+            const sliderLancamentos = document.getElementById('slider-lancamentos');
+            const sliderAcao = document.getElementById('slider-acao');
+            const sliderComedia = document.getElementById('slider-comedia');
 
+            if (!sliderLancamentos) {
+                console.error('Erro: O slider de ação não foi encontrado no DOM.');
+                return;
+            }
 
-                filmes.forEach(filme => {
-                    const cardHTML = `
-                        <div class="col s2">
-                            <div class="card hoverable">
-                                <div class="card-image">
-                                    <img src="${filme.imagem}">
-                                    <a class="btn-floating halfway-fab waves-effect waves-light red">
-                                        <i class="material-icons">favorite_border</i>
-                                    </a>
-                                </div>
-                                <div class="card-content">
-                                    <span class="card-title">${filme.nomeFilme}</span>
-                                    <p class="valign-wrapper">
-                                        <i class="material-icons amber-text">star</i> ${filme.nota}
-                                    </p>
-                                    <p>${filme.sinopse}</p>
-                                </div>
+            filmes.forEach(filme => {
+                const cardHTML = `
+                    <div class="col s2">
+                        <div class="card hoverable">
+                            <div class="card-image">
+                                <img src="${filme.imagem}" alt="${filme.nomeFilme}">
+                                <a class="btn-floating halfway-fab waves-effect waves-light red">
+                                    <i class="material-icons">favorite_border</i>
+                                </a>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons amber-text">star</i> ${filme.nota || 'N/A'}
+                                </p>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons">child_care</i> ${filme.Classificação || 'Classificação desconhecida'}
+                                </p>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
+                                </p>
+
                             </div>
                         </div>
-                    `;
-                    
-                    rowLancamentos.insertAdjacentHTML('beforeend', cardHTML);
-                    
+                    </div>
+                `;
+                  // Adiciona TODOS os filmes ao slider de lançamentos
+                  sliderLancamentos.insertAdjacentHTML('beforeend', cardHTML);
 
-                    // Adiciona o card também na categoria "Ação", se aplicável
-                    if (filme.Categoria.includes('Ação') && rowAcao) {
-                        rowAcao.insertAdjacentHTML('beforeend', cardHTML);
-                    }
+                  // Adiciona o filme ao slider correspondente à sua categoria
+                  if (filme.Categoria.includes('Ação') && sliderAcao) {
+                      sliderAcao.insertAdjacentHTML('beforeend', cardHTML);
+                  }
+
+                  if (filme.Categoria.includes('Comédia') && sliderComedia) {
+                      sliderComedia.insertAdjacentHTML('beforeend', cardHTML);
+                  }
+
+            });
+        })
+        .catch(error => console.error('Erro ao buscar filmes:', error));
+        }
+
+        
+        // Função para rolar a row para esquerda ou direita
+        function scrollSlider(sliderId, direction) {
+        const slider = document.getElementById(sliderId);
+        const scrollAmount = 300; // Define a distância para mover horizontalmente
+
+        // Verifica se o slider existe
+        if (!slider) {
+            console.error(`Erro: O slider com ID "${sliderId}" não foi encontrado.`);
+            return;
+        }
+
+        // Verifica a direção e aplica o movimento
+        if (direction === 'left') {
+            slider.scrollLeft -= scrollAmount; // Move para a esquerda
+        } else if (direction === 'right') {
+            slider.scrollLeft += scrollAmount; // Move para a direita
+        }
+       }
 
 
-                    
-                });
-            })
-            .catch(error => console.error('Erro ao buscar filmes:', error)); // Tratamento de erro
-    }
+
 
     window.onload = carregarFilmes;
-
-</script>
+    </script>
 
 
 </body>

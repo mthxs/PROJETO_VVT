@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import json
 app = Flask(__name__)
@@ -16,7 +16,7 @@ def listar_filmes():
         database="galaxvideo"
     )
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT nomeFilme, imagem, Categoria, Sinopse AS sinopse, NotaPublico AS nota FROM filmes")
+    cursor.execute("SELECT nomeFilme, imagem, Categoria, AnoLanc,Classificação, NotaPublico AS nota FROM filmes")
     filmes = cursor.fetchall()
     conn.close()
     
@@ -26,9 +26,43 @@ def listar_filmes():
         mimetype='application/json; charset=utf-8'
     )
 
-@app.route('/cadastrofilme')
+@app.route('/cadastrarfilme',methods=['GET'])
 def cadastrofilme():
     return render_template('cadastrarfilme.html')
 
+@app.route('/cadastrofilme', methods=['POST'])
+def cadastrar_filme():
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        print("Conexão bem-sucedida!")
+
+        cursor = conn.cursor()
+
+        nome = request.form['nome']
+        ano = request.form['ano']
+        categoria = request.form['categoria']
+        classificacao = request.form['classificacao']
+        sinopse = request.form['sinopse']
+        nota = request.form['nota']
+        imagem = request.form['imagem']
+
+        # Inserindo no banco de dados
+        sql = "INSERT INTO filmes (nomeFilme, AnoLanc, Categoria, imagem, Classificação, Sinopse, NotaPublico) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        valores = (nome, ano, categoria,imagem, classificacao, sinopse, nota)
+        cursor.execute(sql, valores)
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"mensagem": "Filme cadastrado com sucesso!"}), 200
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)
