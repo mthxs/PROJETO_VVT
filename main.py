@@ -16,7 +16,7 @@ def listar_filmes():
         database="galaxvideo"
     )
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT nomeFilme, imagem, Categoria, AnoLanc,Classificação, NotaPublico AS nota FROM filmes")
+    cursor.execute("SELECT nomeFilme, imagem, Trailer, Categoria, AnoLanc, Sinopse,Classificação, NotaPublico AS nota FROM filmes")
     filmes = cursor.fetchall()
     conn.close()
     
@@ -50,10 +50,11 @@ def cadastrar_filme():
         sinopse = request.form['sinopse']
         nota = request.form['nota']
         imagem = request.form['imagem']
+        trailer = request.form['trailer']
 
         # Inserindo no banco de dados
-        sql = "INSERT INTO filmes (nomeFilme, AnoLanc, Categoria, imagem, Classificação, Sinopse, NotaPublico) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        valores = (nome, ano, categoria,imagem, classificacao, sinopse, nota)
+        sql = "INSERT INTO filmes (nomeFilme, AnoLanc, Categoria, imagem, Trailer, Classificação, Sinopse, NotaPublico) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        valores = (nome, ano, categoria, imagem, trailer, classificacao, sinopse, nota)
         cursor.execute(sql, valores)
         conn.commit()
 
