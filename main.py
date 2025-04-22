@@ -4,6 +4,9 @@ import json
 app = Flask(__name__)
 
 @app.route('/')
+def login():
+    return render_template('')
+@app.route('/menu')
 def index():
     return render_template('index.html')
 
@@ -16,7 +19,7 @@ def listar_filmes():
         database="galaxvideo"
     )
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT nomeFilme, imagem, Trailer, Categoria, AnoLanc, Sinopse,Classificação, NotaPublico AS nota FROM filmes")
+    cursor.execute("SELECT idFilme, nomeFilme, imagem, Trailer, Categoria, AnoLanc, Sinopse,Classificação, NotaPublico AS nota FROM filmes")
     filmes = cursor.fetchall()
     conn.close()
     
@@ -25,7 +28,10 @@ def listar_filmes():
         status=200,
         mimetype='application/json; charset=utf-8'
     )
-
+@app.route('/favoritar', methods=['POST'])
+def favoritar_filme():
+    data = request.json
+    filme_id = data.get('id')
 @app.route('/cadastrarfilme',methods=['GET'])
 def cadastrofilme():
     return render_template('cadastrarfilme.html')

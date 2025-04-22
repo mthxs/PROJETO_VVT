@@ -201,6 +201,21 @@
         height: 100%;
         border: none;
     }
+    .info-container {
+    display: flex;
+    flex-direction: column; /* Garante que as informações fiquem abaixo do ano */
+    }
+
+    .info-container p {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center; /* Alinha o ícone HQ ao lado do texto */
+    }
+
+    .info-container .material-icons {
+        margin-left: 10px; /* Adiciona o espaço entre o ano e o ícone */
+        font-size: 40px; /* Aumenta o tamanho para médio */
+    }
      </style>
 </head>
 <body>
@@ -322,6 +337,22 @@
     </div>
   </div>
   <div class="row-container">
+    <h3 class="categoria-titulo">Fantasia</h3>
+    <div class="rowContent">
+        <button class="slider-arrow left" onclick="scrollSlider('slider-fantasia', 'left')">
+            <i class="material-icons">chevron_left</i>
+        </button>
+
+        <div class="slider" id="slider-fantasia">
+            <!-- Filmes serão adicionados aqui dinamicamente -->
+        </div>
+
+        <button class="slider-arrow right" onclick="scrollSlider('slider-fantasia', 'right')">
+            <i class="material-icons">chevron_right</i>
+        </button>
+    </div>
+  </div>
+  <div class="row-container">
     <h3 class="categoria-titulo">Animação</h3>
     <div class="rowContent">
         <button class="slider-arrow left" onclick="scrollSlider('slider-animacao', 'left')">
@@ -398,10 +429,17 @@
                 allowfullscreen>
             </iframe>
         </div>
+        <div class="info-container">
+            <p><strong>Ano:</strong> <span id="modal-year"></span>
+                <i class="material-icons">high_quality</i>
+            </p>
+            <p><strong>Classificação:</strong> <span id="modal-rating"></span></p>
+            <p><strong>Gêneros:</strong> <span id="modal-genres"></span></p>
+        </div>
         <p><strong>Sinopse:</strong> <span id="modal-description"></span></p>
-        <p><strong>Classificação:</strong> <span id="modal-rating"></span></p>
-        <p><strong>Ano:</strong> <span id="modal-year"></span></p>
-        <p><strong>Gêneros:</strong> <span id="modal-genres"></span></p>
+        <button class="btn-delete btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
+            <i class="material-icons">delete</i>
+        </button>
     </div>
 </div>
   <script>
@@ -419,7 +457,7 @@
             const sliderTerror = document.getElementById('slider-terror');
             const sliderSuspense = document.getElementById('slider-suspense');
             const sliderRomance = document.getElementById('slider-romance');
-
+            const sliderFantasia = document.getElementById('slider-fantasia');
 
 
 
@@ -434,9 +472,9 @@
                         <div class="card hoverable">
                             <div class="card-image">
                                 <img src="${filme.imagem}" alt="${filme.nomeFilme}">
-                                <a class="btn-floating halfway-fab waves-effect waves-light red">
+                                <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
                                     <i class="material-icons">favorite_border</i>
-                                </a>
+                                </button>
                             </div>
                             <div class="card-content">
                                 <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>
@@ -458,6 +496,7 @@
                         </div>
                     </div>
                 `;
+                    
                   // Adiciona TODOS os filmes ao slider de lançamentos
                   sliderLancamentos.insertAdjacentHTML('beforeend', cardHTML);
 
@@ -494,6 +533,10 @@
                       sliderSuspense.insertAdjacentHTML('beforeend', cardHTML);
                   }
                   
+                  if (filme.Categoria.includes('Fantasia') && sliderFantasia) {
+                      sliderFantasia.insertAdjacentHTML('beforeend', cardHTML);
+                  }
+
                   if (filme.Categoria.includes('Romance') && sliderRomance) {
                       sliderRomance.insertAdjacentHTML('beforeend', cardHTML);
                   }
@@ -549,7 +592,33 @@
         document.getElementById('modal-trailer').src = "";
         }
 
+        document.addEventListener("click", async e => {
+    if (e.target.closest(".btn-fav")) {
+        const btn = e.target.closest(".btn-fav");
+        const icon = btn.querySelector("i");
+        const filmeId = bnt.getAttribute("data-id");
+        
+        const isFavorito = icon.innerHTML === "favorite";
+        icon.innerHTML = isFavorito ? "favorite_border" : "favorite";
+        
+        document.querySelectorAll(`.btn-fav[data-id="${filmeId}"] i`).forEach(otherIcon => {
+            otherIcon.innerHTML = icon.innerHTML;
+        });
+        try {
+            const response = await fetch("http://localhost:5000/favoritar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: filmeId, favorito: !isFavorito })
+            });
 
+            const data = await response.json();
+            console.log(data.message); // Mensagem do backend
+        } catch (error) {
+            console.error("Erro ao favoritar:", error);
+        }
+
+    }
+    });
 
     window.onload = carregarFilmes;
     </script>
