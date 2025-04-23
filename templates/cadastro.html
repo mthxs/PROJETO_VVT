@@ -29,7 +29,7 @@
       width: 300px;
     }
 
-    .login-container {
+    .cadastro-container {
       background-color: #0c0a33;
       padding: 40px;
       border-radius: 10px;
@@ -94,20 +94,68 @@
   <div class="logo">
     <img src="static/images/logo_galax.png" alt="Logo Galax Video" />
   </div>
-
-  <div class="login-container">
+  <div class="cadastro-container">
     <h2>Crie sua conta</h2>
     <p class="descricao-menor">Preencha os dados abaixo para se cadastrar no Galax Video.</p>
-    <form>
-      <input type="text" placeholder="Nome completo" required />
-      <input type="email" placeholder="E-mail" required />
-      <input type="password" placeholder="Senha" required />
-      <input type="password" placeholder="Confirme a senha" required />
+    <form id="cadastroForm" method="POST">
+      <input type="text" id="nome" name="nome" placeholder="Nome completo" required />
+      <input type="email" id="email" name="email" placeholder="E-mail" required />
+      <input type="password" id="senha" name="senha"placeholder="Senha" required />
+      <input type="password" name="confirmar_senha" placeholder="Confirme a senha" required />
       <button type="submit">Cadastrar</button>
     </form>
     <div class="links">
-      <p>Já tem uma conta? <a href="login.html">Entrar</a></p>
+      <p>Já tem uma conta? <a href="/">Entrar</a></p>
     </div>
   </div>
+  <script>
+    document.getElementById("cadastroForm").addEventListener("submit", function(event) {
+          event.preventDefault(); // Impede o envio tradicional do formulário
+          
+          const nome = document.getElementById("nome").value;
+          const email = document.getElementById("email").value;
+          const senha = document.getElementById("senha").value;
+          const confirmarSenha = document.querySelector("input[name='confirmar_senha']").value;
+          
+          if(senha.lenght < 8){
+            alert("A senha deve ter pelo menos 8 caracteres.")
+            return;
+          }
+
+          if(senha !== confirmarSenha){
+            alert("As senhas não coincidem.")
+            return;
+          }
+
+          const emailValido = /(gmail\.com|hotmail\.com|outlook\.com|icloud\.com)$/i;
+          if (!emailValido.test(email)) {
+              alert("O e-mail deve terminar com gmail.com, hotmail.com, outlook.com ou icloud.com.");
+              return ;
+          }
+
+
+
+          const formData = new FormData(this);
+          fetch("/cadastro", {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.mensagem) {
+                  alert("Você foi cadastrado com sucesso!");
+                  setTimeout(() => {
+                  window.location.href = "http://localhost:5000/";
+                  }, 500);
+              } else if (data.erro) {
+                  alert("Erro ao cadastrar: " + data.erro);
+              }
+          })
+          .catch(error => {
+              alert("Ocorreu um erro. Tente novamente.");
+              console.error("Erro:", error);
+          });
+      });
+  </script>
 </body>
 </html>

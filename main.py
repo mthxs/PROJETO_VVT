@@ -3,9 +3,74 @@ import mysql.connector
 import json
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def login():
-    return render_template('')
+    return render_template('login.html')
+@app.route('/logar', methods=['POST'])
+def logar():
+    try:
+        
+        print("Dados recebidos:", request.form)
+        email = request.form['email']
+        senha = request.form['senha']
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        query = "SELECT * FROM Usuario WHERE Email = %s AND senha = %s"
+        valores = (email, senha)
+        cursor.execute(query, valores)
+        usuario = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if usuario:
+            return jsonify({"autenticado": True, "usuarioId": usuario['idUser']}), 200
+        else:
+            return jsonify({"autenticado": False}), 401
+    except Exception as e:
+        print("Erro ao fazer login:", str(e))
+        return jsonify({"erro": "Erro interno no Servidor"}, 500)
+    
+@app.route('/cadastrar', methods=['GET'])
+def cadastro():
+    return render_template('cadastro.html')
+
+@app.route('/cadastro', methods=['POST'])
+def cadastrar():
+    try:
+        print("Dados recebidos:", request.form)
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        print("Conexão bem-sucedida!")
+
+        cursor = conn.cursor()
+
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
+        sql = "INSERT INTO Usuario (Nome, Email, senha) VALUES (%s, %s, %s)"
+        valores = (nome, email, senha)
+        cursor.execute(sql, valores)
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"mensagem": "Você foi cadastrado com sucesso!"}), 200
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
 @app.route('/menu')
 def index():
     return render_template('index.html')
@@ -30,11 +95,99 @@ def listar_filmes():
     )
 @app.route('/favoritar', methods=['POST'])
 def favoritar_filme():
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="galaxvideo"
+    )
+    cursor = conn.cursor()
+
     data = request.json
-    filme_id = data.get('id')
+    filme_id = data.get('filmeId')  # ID do filme recebido pelo frontend
+    usuario_id = data.get('usuarioId')  # ID do usuário recebido pelo frontend
+
+    cursor.execute("SELECT * FROM favoritos WHERE usuario_id = %s AND filme_id = %s", (usuario_id, filme_id))
+    favorito = cursor.fetchone()
+
+    if favorito:
+        cursor.execute("DELETE FROM favoritos WHERE usuario_id = %s AND filme_id = %s", (usuario_id, filme_id))
+        conn.commit()
+        status = "removido"
+    else:
+        cursor.execute("INSERT INTO favoritos (usuario_id, filme_id) VALUES (%s, %s)", (usuario_id, filme_id))
+        conn.commit()
+        status = "adicionado"
+    conn.close()
+    return jsonify({"message": f"Filme {status} com sucesso!"})
+
+@app.route('/meus-favoritos', methods=['POST'])
+def meus_favoritos():
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        data = request.json
+        usuario_id = data.get('usuarioId')  # ID do usuário recebido do frontend
+        # Busca os filmes favoritados pelo usuário
+        query = """
+            SELECT filme_id 
+            FROM favoritos 
+            WHERE usuario_id = %s
+        """
+        cursor.execute(query, (usuario_id,))
+        favoritos = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        # Retorna apenas os IDs dos filmes favoritados
+        return jsonify([favorito['filme_id'] for favorito in favoritos]), 200
+    except Exception as e:
+        print("Erro ao buscar favoritos:", str(e))
+        return jsonify({"erro": "Erro interno no Servidor"}), 500
+
+@app.route('/favoritos-usuario', methods=['POST'])
+def favoritos_usuario():
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        data = request.json
+        usuario_id = data.get('usuarioId')
+
+        # Retorna detalhes completos dos filmes favoritados
+        query = """
+            SELECT f.idFilme, f.nomeFilme, f.imagem, f.Trailer, f.Categoria, f.AnoLanc, 
+                   f.Sinopse, f.Classificação, f.NotaPublico AS nota
+            FROM favoritos fav
+            INNER JOIN filmes f ON fav.filme_id = f.idFilme
+            WHERE fav.usuario_id = %s
+        """
+
+        cursor.execute(query, (usuario_id,))
+        filmes_favoritos = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(filmes_favoritos), 200
+    except Exception as e:
+        print("Erro ao buscar favoritos:", str(e))
+        return jsonify({"erro": "Erro interno no Servidor"}), 500
+
 @app.route('/cadastrarfilme',methods=['GET'])
 def cadastrofilme():
     return render_template('cadastrarfilme.html')
+
 
 @app.route('/cadastrofilme', methods=['POST'])
 def cadastrar_filme():

@@ -216,6 +216,25 @@
         margin-left: 10px; /* Adiciona o espaço entre o ano e o ícone */
         font-size: 40px; /* Aumenta o tamanho para médio */
     }
+    #favoritos-tab {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Espaço entre os filmes */
+    justify-content: left; /* Alinha os itens ao centro */
+    }
+
+    #favoritos-tab .card {
+    width: 200px; /* Define o tamanho fixo dos cards */
+    }
+    .classificacao-indicativa {
+    position: absolute;
+    top: 5px; /* Alinha ao topo no mesmo nível do botão de coração */
+    left: 10px; /* Posiciona no lado esquerdo */
+    width: 50px; /* Mantém um tamanho proporcional */
+    height: 50px;
+    object-fit: contain; /* Evita distorções */
+    z-index: 2; /* Garante que fique acima do pôster */
+}
      </style>
 </head>
 <body>
@@ -232,190 +251,199 @@
 </div>    
     <div class="nav-content">
       <ul class="tabs tabs-transparent">
-        <li class="tab"><a class="active" href="#test1">Todos</a></li>
-        <li class="tab"><a href="#test2">Assistidos</a></li>
-        <li class="tab disabled"><a href="#test3">Favoritos</a></li>
+        <li class="tab"><a href="#todos">Todos</a></li>
+        <li class="tab"><a href="#favorito">Favoritos</a></li>
        
       </ul>
     </div>
   </nav>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Lançamentos</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-lancamentos', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+  <div id="todos" class="tab-content">
+    <div class="row-container">
+        <h3 class="categoria-titulo">Lançamentos</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-lancamentos', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-lancamentos">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-lancamentos">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-lancamentos', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-lancamentos', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Ação</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-acao', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Ação</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-acao', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-acao">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-acao">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-acao', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-acao', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Comédia</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-comedia', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Comédia</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-comedia', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-comedia">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-comedia">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-comedia', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-comedia', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Aventura</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-aventura', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Aventura</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-aventura', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-aventura">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-aventura">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-aventura', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-aventura', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Drama</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-drama', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Drama</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-drama', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-drama">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-drama">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-drama', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-drama', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Ficção Cientifica</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-ficcao', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Ficção Cientifica</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-ficcao', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-ficcao">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-ficcao">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-ficcao', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-ficcao', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Fantasia</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-fantasia', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Fantasia</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-fantasia', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-fantasia">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-fantasia">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-fantasia', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-fantasia', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Animação</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-animacao', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Animação</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-animacao', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-animacao">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-animacao">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-animacao', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-animacao', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Terror</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-terror', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Terror</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-terror', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-terror">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-terror">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-terror', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-terror', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Suspense</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-suspense', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Suspense</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-suspense', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-suspense">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-suspense">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-suspense', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-suspense', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
-  <div class="row-container">
-    <h3 class="categoria-titulo">Romance</h3>
-    <div class="rowContent">
-        <button class="slider-arrow left" onclick="scrollSlider('slider-romance', 'left')">
-            <i class="material-icons">chevron_left</i>
-        </button>
+    <div class="row-container">
+        <h3 class="categoria-titulo">Romance</h3>
+        <div class="rowContent">
+            <button class="slider-arrow left" onclick="scrollSlider('slider-romance', 'left')">
+                <i class="material-icons">chevron_left</i>
+            </button>
 
-        <div class="slider" id="slider-romance">
-            <!-- Filmes serão adicionados aqui dinamicamente -->
+            <div class="slider" id="slider-romance">
+                <!-- Filmes serão adicionados aqui dinamicamente -->
+            </div>
+
+            <button class="slider-arrow right" onclick="scrollSlider('slider-romance', 'right')">
+                <i class="material-icons">chevron_right</i>
+            </button>
         </div>
-
-        <button class="slider-arrow right" onclick="scrollSlider('slider-romance', 'right')">
-            <i class="material-icons">chevron_right</i>
-        </button>
     </div>
-  </div>
+</div>
+<div id="favorito" class="tab-content" style="display: none;">
+    <div class="row-container">
+    <h3 class="categoria-titulo">Meus Favoritos</h3>
+        <div id="favoritos-tab" class="rowContent">
+        <!-- Os filmes favoritos aparecerão aqui -->
+        </div>
+    </div>
+</div>
+
   <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close-button" onclick="closeModal()">&times;</span>
@@ -443,6 +471,8 @@
     </div>
 </div>
   <script>
+    const usuarioId = localStorage.getItem("usuarioId");
+    console.log("Usuário logado com ID:", usuarioId);
       function carregarFilmes() {
     fetch('http://localhost:5000/filmes') 
         .then(response => response.json())
@@ -467,6 +497,7 @@
             }
 
             filmes.forEach(filme => {
+                const caminhoClassificacao = carregarClassificacao(filme.Classificação);
                 const cardHTML = `
                     <div class="col s2">
                         <div class="card hoverable">
@@ -475,14 +506,12 @@
                                 <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
                                     <i class="material-icons">favorite_border</i>
                                 </button>
+                                <i class="classificacao-indicativa" style="background-image: url('${caminhoClassificacao}');"></i>
                             </div>
                             <div class="card-content">
                                 <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>
                                 <p class="valign-wrapper">
                                     <i class="material-icons amber-text">star</i> ${filme.nota || 'N/A'}
-                                </p>
-                                <p class="valign-wrapper">
-                                    <i class="material-icons">child_care</i> ${filme.Classificação || 'Classificação desconhecida'}
                                 </p>
                                 <p class="valign-wrapper">
                                     <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
@@ -546,8 +575,92 @@
         })
         .catch(error => console.error('Erro ao buscar filmes:', error));
         }
-
+        function carregarClassificacao(classificacao) {
+    
+        const diretorio = "/static/images/";
         
+        // Constrói o caminho da imagem com base na classificação
+        const caminhoImagem = `${diretorio}classificacao${classificacao}.png`;
+
+        return caminhoImagem; // Retorna o caminho completo
+        }
+        document.querySelectorAll(".tabs a").forEach(tab => {
+        tab.addEventListener("click", (event) => {
+            event.preventDefault(); // Evita comportamento padrão
+
+            // Esconde todo o conteúdo das abas
+            document.querySelectorAll(".tab-content").forEach(content => content.style.display = "none");
+
+            // Ativa a aba selecionada
+            const target = event.target.getAttribute("href");
+            document.querySelector(target).style.display = "block";
+
+            // Se for a aba de favoritos, carregamos apenas os filmes favoritados
+            if (target === "#favorito") {
+                document.getElementById("todos").style.display = "none"; // 🔹 Esconde todos os filmes gerais
+                carregarFavoritos();
+            } else {
+                document.getElementById("todos").style.display = "block"; // 🔹 Exibe os filmes gerais novamente
+            }
+        });
+        });
+        async function carregarFavoritos() {
+        const usuarioId = localStorage.getItem("usuarioId");
+
+        if (!usuarioId) {
+            console.error("Usuário não logado ou ID não disponível.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/favoritos-usuario", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ usuarioId })
+            });
+
+            const filmesFavoritos = await response.json();
+            console.log("Filmes favoritos carregados:", filmesFavoritos);
+
+            const favoritosContainer = document.getElementById("favoritos-tab");
+            favoritosContainer.innerHTML = ""; // 🔹 Limpa antes de adicionar os filmes favoritos
+
+            filmesFavoritos.forEach(filme => {
+                const cardHTML = `
+                    <div class="col s2">
+                        <div class="card hoverable">
+                            <div class="card-image">
+                                <img src="${filme.imagem}" alt="${filme.nomeFilme}">
+                                <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
+                                    <i class="material-icons">favorite</i>
+                                </button>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons amber-text">star</i> ${filme.nota || 'N/A'}
+                                </p>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons">child_care</i> ${filme.Classificação || 'Classificação desconhecida'}
+                                </p>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
+                                </p>
+                                <div class="expand-container">
+                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>
+                                    <i class="material-icons">expand_more</i>
+                                </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                favoritosContainer.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar filmes favoritos:", error);
+        }
+        }
         // Função para rolar a row para esquerda ou direita
         function scrollSlider(sliderId, direction) {
         const slider = document.getElementById(sliderId);
@@ -596,31 +709,75 @@
     if (e.target.closest(".btn-fav")) {
         const btn = e.target.closest(".btn-fav");
         const icon = btn.querySelector("i");
-        const filmeId = bnt.getAttribute("data-id");
-        
+        const filmeId = btn.getAttribute("data-id"); // ID do filme
+        const usuarioId = localStorage.getItem("usuarioId");
+
         const isFavorito = icon.innerHTML === "favorite";
         icon.innerHTML = isFavorito ? "favorite_border" : "favorite";
-        
+
+        // Sincroniza todos os botões com o mesmo ID
         document.querySelectorAll(`.btn-fav[data-id="${filmeId}"] i`).forEach(otherIcon => {
             otherIcon.innerHTML = icon.innerHTML;
         });
+       
+        // Envia ao backend
         try {
+            if (!usuarioId) {
+            console.error("Usuário não logado ou ID não disponível.");
+            alert("Por favor, faça login antes de favoritar filmes.");
+            return;
+        }
             const response = await fetch("http://localhost:5000/favoritar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: filmeId, favorito: !isFavorito })
+                body: JSON.stringify({ filmeId, usuarioId }) // 🔹 Envia também o usuarioId
             });
 
             const data = await response.json();
-            console.log(data.message); // Mensagem do backend
+            console.log(data.message);
+            
         } catch (error) {
             console.error("Erro ao favoritar:", error);
         }
-
     }
     });
+    
+    window.onload = async function() {
+    await carregarFilmes();  // 🔹 Primeiro, carrega os filmes
 
-    window.onload = carregarFilmes;
+    setTimeout(async () => { // 🔹 Pequeno delay para garantir que os botões existam no DOM
+        const usuarioId = localStorage.getItem("usuarioId");
+
+        if (!usuarioId) {
+            console.error("Usuário não logado ou ID não disponível.");
+            alert("Você precisa estar logado para acessar seus favoritos!");
+            window.location.href = "/login";
+            return;
+        }
+
+        try {
+            const response = await fetch("/meus-favoritos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ usuarioId })
+            });
+
+            const favoritos = await response.json();
+            console.log("Filmes favoritados recebidos:", favoritos);
+
+            document.querySelectorAll(".btn-fav").forEach(btn => {
+                const filmeId = btn.getAttribute("data-id");
+
+                if (favoritos.map(String).includes(filmeId)) { 
+                    const icon = btn.querySelector("i");
+                    icon.innerHTML = "favorite"; // 🔹 Marca visualmente como favorito
+                }
+            });
+        } catch (error) {
+            console.error("Erro ao carregar favoritos:", error);
+        }
+    }, 500);  // 🔹 Tempo de 500ms para garantir a existência dos elementos
+};
     </script>
 
 
