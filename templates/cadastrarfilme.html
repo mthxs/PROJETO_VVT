@@ -130,6 +130,10 @@
       </div>
     </div>
     <script>
+      const usuarioId = localStorage.getItem("usuarioId");
+      if (!usuarioId) {
+            window.location.href = "/"; 
+      }
       document.getElementById("cadastroFilmeForm").addEventListener("submit", function(event) {
           event.preventDefault(); // Impede o envio tradicional do formulário
       

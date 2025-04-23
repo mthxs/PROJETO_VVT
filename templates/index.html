@@ -35,10 +35,60 @@
         }
         
         .nav-content {
+          position: relative;  
+          display: flex;
+          justify-content: space-between;
           background-color: #0f0838;
           padding: 0 !important;
           margin: 0 !important;
+          height: 50px;
           border: none !important;
+        }
+        
+        .search-container {
+            position: relative;
+            top: 0px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 50px;
+        }
+
+        #search-input {
+            color:white;
+            margin: 0;
+            display: none;
+            width: 400px;
+            height: 30px;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+        .search-container.active #search-input {
+            width: 200px;
+            opacity: 0;
+            right: auto;
+            left: 0;/* 🔹 Move o input para a esquerda */
+        }
+
+        /* 🔹 Move o botão também */
+        .search-container.active #search-btn {
+            transform: translateX(-210px);
+        }
+
+        #search-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; /* 🔹 Ajuste conforme necessário */
+            height: 40px;
+            transition: transform 0.3s ease;
+            background: transparent;
+            border: none; 
+        }
+        #search-btn i{
+            color:white;
         }
         .nav-header img {
           width: auto; /* Escolha a largura desejada */
@@ -77,7 +127,14 @@
         background-color: #0A0C1A; /* Alterar para a cor desejada */
         }
         .tab a.active{
-          border-bottom: solid 2px #fff;
+          background-color: transparent;   
+          border-bottom: solid 2px #fff ;
+        }
+       
+        .tabs .tab a:focus,
+        .tabs .tab a:focus.active {
+            border-bottom: 2px solid white !important;
+          background-color: transparent !important;      
         }
         .row-container {
         position: relative;
@@ -219,13 +276,78 @@
     #favoritos-tab {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px; /* Espaço entre os filmes */
-    justify-content: left; /* Alinha os itens ao centro */
+    gap: 10px; /* Espaço entre os filmes */
+    justify-content: left; 
+    padding-left: 10px; 
     }
 
     #favoritos-tab .card {
-    width: 200px; /* Define o tamanho fixo dos cards */
+    width: 200px; 
     }
+    #categoria-tab {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /*Espaçamento entre os filmes */
+    justify-content: left; 
+    padding-left: 10px; 
+    }
+    #categoria-tab .card {
+    width: 200px;
+    
+    }   
+    .select-container {
+    left: 10px ;   
+    position: relative;
+    width: 250px;
+    }
+    .select-container {
+    position: relative;
+    width: 250px;
+    }
+
+    .select-container::after {
+        content: "expand_more";
+        font-family: "Material Icons";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        pointer-events: none; /* 🔹 Impede que o ícone atrapalhe o clique */
+    }
+    #selecionarGenero:hover {
+    background-color: #333;
+    transition: 0.3s;
+    }
+    #selecionarGenero {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 16px;
+        border-radius: 5px;
+        background-color: #222;
+        color: white;
+        border: 1px solid #444;
+        cursor: pointer;
+        appearance: none; /* Remove estilo padrão */
+        text-align: center;
+    }
+
+    #selecionarGenero option {
+        padding: 10px;
+    }
+
+    /* Simula um menu dropdown de múltiplas colunas */
+    #selecionarGenero[multiple] {
+        height: auto;
+        display: block;
+        column-count: 3; /* 🔹 Divide as opções em três colunas */
+        overflow-y: auto;
+        max-height: 200px;
+    }
+    #selecionarGenero {
+    display: block !important; /* Força a exibição */
+    }
+    
     .classificacao-indicativa {
     position: absolute;
     top: 5px; /* Alinha ao topo no mesmo nível do botão de coração */
@@ -234,16 +356,28 @@
     height: 50px;
     object-fit: contain; /* Evita distorções */
     z-index: 2; /* Garante que fique acima do pôster */
+    }
+    
+    #filmes-encontrados {
+    display: flex;
+    flex-wrap: wrap; /* 🔹 Permite que os filmes quebrem de linha se necessário */
+    gap: 10px; /* 🔹 Adiciona espaçamento entre os cards */
+    justify-content: left; /* 🔹 Centraliza os filmes na tela */
+    padding-left: 10px;
 }
-     </style>
+    #resultado-pesquisa {
+        color: white; 
+    }
+    </style>
 </head>
 <body>
     
   <nav class="nav-extended">
     <div class="nav-wrapper">
         <ul id="nav-mobile" class="right">
-            <li><a href="index.html">Catálogo</a></li>
+            <li><a href="/menu">Catálogo</a></li>
             <li><a href="/cadastrarfilme">Cadastrar</a></li>
+            <li><a href="/">Sair</a></li>
         </ul>
     </div>
     <div class="nav-header center">
@@ -253,8 +387,14 @@
       <ul class="tabs tabs-transparent">
         <li class="tab"><a href="#todos">Todos</a></li>
         <li class="tab"><a href="#favorito">Favoritos</a></li>
-       
+        <li class="tab"><a href="#categorias">Categorias</a></li>
       </ul>
+      <div class="search-container">
+        <button id="search-btn">
+            <i class="material-icons">search</i>
+        </button>
+        <input type="text" id="search-input" placeholder="Encontrar Filmes e Séries" />
+    </div>
     </div>
   </nav>
   <div id="todos" class="tab-content">
@@ -443,7 +583,32 @@
         </div>
     </div>
 </div>
+<div id="categorias" class="tab-content" style="display: none;">
+    <h3 class="categoria-titulo">Filmes por Gênero</h3> 
+    <div class="select-container">
+        <select id="selecionarGenero" size="1">
+            <option value="" disabled selected>Escolha um gênero</option>
+            <option value="acao">Ação</option>
+            <option value="comedia">Comédia</option>
+            <option value="terror">Terror</option>
+            <option value="drama">Drama</option>
+            <option value="ficcao">Ficção Científica</option>
+            <option value="fantasia">Fantasia</option>
+            <option value="romance">Romance</option>
+            <option value="documentario">Documentário</option>
+            <option value="animacao">Animação</option>
+        </select>
+    </div>
+    <div class="row-container">
+        <div id="categoria-tab" class="rowContent"></div>
+    </div>
+</div>
+<div id="resultado-pesquisa" class="row-container" style="display: none;">
+    <h3>Buscar por "<span id="termo-busca"></span>"</h3>
+    <div id="filmes-encontrados" class="rowContent">
 
+    </div>
+</div>
   <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close-button" onclick="closeModal()">&times;</span>
@@ -471,7 +636,12 @@
     </div>
 </div>
   <script>
+    // 🔹 Verifica se o usuário ainda está logado
     const usuarioId = localStorage.getItem("usuarioId");
+    if (!usuarioId) {
+            window.location.href = "/"; // 🔹 Redireciona para a página de login se não estiver autenticado
+        }
+
     console.log("Usuário logado com ID:", usuarioId);
       function carregarFilmes() {
     fetch('http://localhost:5000/filmes') 
@@ -595,15 +765,17 @@
             const target = event.target.getAttribute("href");
             document.querySelector(target).style.display = "block";
 
-            // Se for a aba de favoritos, carregamos apenas os filmes favoritados
+            // Esconde a aba de todos os filmes e carrega os dados específicos da aba selecionada
+            document.getElementById("todos").style.display = "none";
+
             if (target === "#favorito") {
-                document.getElementById("todos").style.display = "none"; // 🔹 Esconde todos os filmes gerais
-                carregarFavoritos();
-            } else {
-                document.getElementById("todos").style.display = "block"; // 🔹 Exibe os filmes gerais novamente
+                carregarFavoritos(); // 🔹 Carrega apenas os filmes favoritados
+            } else if (target !== "#categorias") {
+            document.getElementById("todos").style.display = "block"; // Exibe os filmes gerais novamente
             }
+
         });
-        });
+         });
         async function carregarFavoritos() {
         const usuarioId = localStorage.getItem("usuarioId");
 
@@ -626,6 +798,7 @@
             favoritosContainer.innerHTML = ""; // 🔹 Limpa antes de adicionar os filmes favoritos
 
             filmesFavoritos.forEach(filme => {
+                const caminhoClassificacao = carregarClassificacao(filme.Classificação);
                 const cardHTML = `
                     <div class="col s2">
                         <div class="card hoverable">
@@ -634,14 +807,12 @@
                                 <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
                                     <i class="material-icons">favorite</i>
                                 </button>
+                                <i class="classificacao-indicativa" style="background-image: url('${caminhoClassificacao}');"></i>
                             </div>
                             <div class="card-content">
                                 <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>
                                 <p class="valign-wrapper">
                                     <i class="material-icons amber-text">star</i> ${filme.nota || 'N/A'}
-                                </p>
-                                <p class="valign-wrapper">
-                                    <i class="material-icons">child_care</i> ${filme.Classificação || 'Classificação desconhecida'}
                                 </p>
                                 <p class="valign-wrapper">
                                     <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
@@ -661,6 +832,61 @@
             console.error("Erro ao carregar filmes favoritos:", error);
         }
         }
+        
+        document.getElementById("selecionarGenero").addEventListener("change", () => {
+        carregarFilmesPorGenero(); // 🔹 Só faz a requisição quando o gênero for selecionado
+        });
+        async function carregarFilmesPorGenero() {
+        const generoSelecionado = document.getElementById("selecionarGenero").value;
+
+        try {
+            const response = await fetch("/filmes-por-genero", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ genero: generoSelecionado }) // 🔹 Envia o gênero selecionado para o backend
+            });
+
+            const filmesFiltrados = await response.json();
+            console.log("Filmes carregados por gênero:", filmesFiltrados);
+
+            const categoriaContainer = document.getElementById("categoria-tab");
+            categoriaContainer.innerHTML = ""; // Limpa a aba antes de exibir os filmes
+
+            filmesFiltrados.forEach(filme => {
+                const caminhoClassificacao = carregarClassificacao(filme.Classificação);
+                const cardHTML = `
+                   <div class="col s2">
+                        <div class="card hoverable">
+                            <div class="card-image">
+                                <img src="${filme.imagem}" alt="${filme.nomeFilme}">
+                                <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
+                                    <i class="material-icons">favorite</i>
+                                </button>
+                                <i class="classificacao-indicativa" style="background-image: url('${caminhoClassificacao}');"></i>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons amber-text">star</i> ${filme.nota || 'N/A'}
+                                </p>
+                                <p class="valign-wrapper">
+                                    <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
+                                </p>
+                                <div class="expand-container">
+                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>
+                                    <i class="material-icons">expand_more</i>
+                                </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            `;
+                categoriaContainer.insertAdjacentHTML('beforeend', cardHTML);
+            });
+    } catch (error) {
+        console.error("Erro ao carregar filmes por gênero:", error);
+    }
+    }
         // Função para rolar a row para esquerda ou direita
         function scrollSlider(sliderId, direction) {
         const slider = document.getElementById(sliderId);
@@ -778,6 +1004,96 @@
         }
     }, 500);  // 🔹 Tempo de 500ms para garantir a existência dos elementos
 };
+        document.getElementById("search-btn").addEventListener("click", function(event) {
+            event.preventDefault(); // 🔹 Evita bugs
+
+            const searchInput = document.getElementById("search-input");
+            const searchBtn = document.getElementById("search-btn");
+
+            if (searchInput.style.display === "none") {
+                searchInput.style.display = "block"; // 🔹 Faz o input aparecer
+                searchBtn.style.transform = "translateX(-20px)"; // 🔹 Move a lupa para a esquerda
+                searchInput.focus(); // 🔹 Foca no input ao expandir
+            } else {
+                searchInput.style.display = "none"; // 🔹 Oculta novamente ao clicar
+                searchBtn.style.transform = "translateX(0)"; // 🔹 Retorna o botão para a posição original
+            }
+        });
+
+        let buscaTimeout; // 🔹 Variável global para controlar o tempo entre buscas
+
+        document.getElementById("search-input").addEventListener("input", function() {
+            clearTimeout(buscaTimeout); // 🔹 Cancela a execução anterior para evitar sobrecarga
+
+            buscaTimeout = setTimeout(async function() {
+                const searchTerm = document.getElementById("search-input").value.toLowerCase();
+                const resultadoContainer = document.getElementById("filmes-encontrados");
+
+                resultadoContainer.innerHTML = ""; // 🔹 Limpa resultados para evitar repetição
+
+                if (searchTerm === "") {
+                    document.querySelectorAll(".row-container").forEach(row => row.style.display = "block");
+                    document.getElementById("resultado-pesquisa").style.display = "none";
+                    return;
+                }
+
+                document.querySelectorAll(".row-container").forEach(row => row.style.display = "none");
+                document.getElementById("resultado-pesquisa").style.display = "block";
+                const response = await fetch(`/buscar_filmes?q=${encodeURIComponent(searchTerm)}&user_id=${usuarioId}`);  
+                const termoBuscaSpan = document.getElementById("termo-busca"); // 🔹 Elemento dentro das aspas
+
+                // 🔹 Atualiza o conteúdo do <span> dentro do <h3>
+                termoBuscaSpan.textContent = searchTerm !== "" ? searchTerm : "...";
+
+                const filmes = await response.json();  
+
+                const idsFilmesAdicionados = new Set(); // 🔹 Conjunto para rastrear quais IDs já foram inseridos  
+
+                filmes.forEach(filme => {  
+                    if (!idsFilmesAdicionados.has(filme.idFilme)) { // 🔹 Verifica se o filme já foi adicionado  
+                        idsFilmesAdicionados.add(filme.idFilme); // 🔹 Adiciona ao conjunto para evitar repetição  
+
+                        const caminhoClassificacao = carregarClassificacao(filme.Classificação);  
+
+                        const cardHTML = `  
+                            <div class="col s2">  
+                                <div class="card hoverable">  
+                                    <div class="card-image">  
+                                        <img src="${filme.imagem}" alt="${filme.nomeFilme}">  
+                                        <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">  
+                                            <i class="material-icons">${filme.isFavorito ? 'favorite' : 'favorite_border'}</i>  
+                                        </button>  
+                                        <i class="classificacao-indicativa" style="background-image: url('${caminhoClassificacao}');"></i>  
+                                    </div>  
+                                    <div class="card-content">  
+                                        <span class="card-title">${filme.nomeFilme || 'Título não encontrado'}</span>  
+                                        <p class="valign-wrapper">  
+                                            <i class="material-icons amber-text">star</i> ${filme.nota || 'N/A'}  
+                                        </p>  
+                                        <p class="valign-wrapper">  
+                                            <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}  
+                                        </p>  
+                                        <div class="expand-container">  
+                                            <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>  
+                                                <i class="material-icons">expand_more</i>  
+                                            </a>  
+                                        </div>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        `;  
+
+                        resultadoContainer.insertAdjacentHTML('beforeend', cardHTML);  
+                    }  
+                });
+            }, 300); // 🔹 Aguarda 300ms antes de executar a busca, evitando chamadas excessivas
+            });
+            document.querySelector('a[href="/"]').addEventListener("click", function(event) {
+            event.preventDefault(); // 🔹 Impede que o link execute imediatamente
+            localStorage.removeItem("usuarioId"); // 🔹 Remove o ID do usuário do armazenamento
+            window.location.href = "/"; // 🔹 Redireciona para a página de login
+         });
+
     </script>
 
 

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect
 import mysql.connector
 import json
 app = Flask(__name__)
@@ -73,10 +73,12 @@ def cadastrar():
 
 @app.route('/menu')
 def index():
+    
     return render_template('index.html')
 
 @app.route('/filmes', methods=['GET'])
 def listar_filmes():
+    
     conn = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -93,8 +95,41 @@ def listar_filmes():
         status=200,
         mimetype='application/json; charset=utf-8'
     )
+@app.route('/buscar_filmes', methods=['GET'])
+def buscar_filmes():
+    termo_busca = request.args.get('q', '')  
+    id_usuario = request.args.get('user_id', '')  
+
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="galaxvideo"
+    )
+    cursor = conn.cursor(dictionary=True)
+
+    # 🔹 Adicionamos `usuario_id` na resposta para verificar o que está sendo processado
+    cursor.execute("""
+        SELECT f.idFilme, f.nomeFilme, f.imagem, f.Trailer, f.Categoria, f.AnoLanc, f.Sinopse, f.Classificação, f.NotaPublico AS nota,
+               %s AS usuario_id,
+               CASE WHEN EXISTS (
+                   SELECT 1 FROM favoritos fav WHERE fav.filme_id = f.idFilme AND fav.usuario_id = %s
+               ) THEN 1 ELSE 0 END AS isFavorito
+        FROM filmes f
+        WHERE f.nomeFilme LIKE %s
+    """, (id_usuario, id_usuario, termo_busca + '%'))
+
+    filmes = cursor.fetchall()
+    conn.close()
+
+    return app.response_class(
+        response=json.dumps(filmes, ensure_ascii=False),
+        status=200,
+        mimetype='application/json; charset=utf-8'
+    )
 @app.route('/favoritar', methods=['POST'])
 def favoritar_filme():
+   
     conn = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -123,6 +158,7 @@ def favoritar_filme():
 
 @app.route('/meus-favoritos', methods=['POST'])
 def meus_favoritos():
+
     try:
         conn = mysql.connector.connect(
             host="localhost",
@@ -152,6 +188,7 @@ def meus_favoritos():
 
 @app.route('/favoritos-usuario', methods=['POST'])
 def favoritos_usuario():
+
     try:
         conn = mysql.connector.connect(
             host="localhost",
@@ -186,6 +223,7 @@ def favoritos_usuario():
 
 @app.route('/cadastrarfilme',methods=['GET'])
 def cadastrofilme():
+
     return render_template('cadastrarfilme.html')
 
 
@@ -224,5 +262,37 @@ def cadastrar_filme():
 
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+
+@app.route('/filmes-por-genero', methods=['POST'])
+def filmes_por_genero():
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        data = request.json
+        genero = data.get('genero')
+
+        # Consulta SQL para buscar filmes pelo gênero escolhido
+        query = """
+            SELECT idFilme, nomeFilme, imagem, Categoria, AnoLanc, Classificação, NotaPublico AS nota
+            FROM filmes
+            WHERE Categoria LIKE %s
+        """
+        cursor.execute(query, (genero,))
+        filmes_filtrados = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(filmes_filtrados), 200
+    except Exception as e:
+        print("Erro ao buscar filmes por gênero:", str(e))
+        return jsonify({"erro": "Erro interno no Servidor"}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)
