@@ -9,8 +9,6 @@ def login():
 @app.route('/logar', methods=['POST'])
 def logar():
     try:
-        
-        print("Dados recebidos:", request.form)
         email = request.form['email']
         senha = request.form['senha']
         conn = mysql.connector.connect(
@@ -33,11 +31,10 @@ def logar():
             return jsonify({"autenticado": True, "usuarioId": usuario['idUser']}), 200
         else:
             return jsonify({"autenticado": False}), 401
+
     except Exception as e:
-        print("Erro ao fazer login:", str(e))
-        return jsonify({"erro": "Erro interno no Servidor"}, 500)
-    
-@app.route('/cadastrar', methods=['GET'])
+        print("Erro ao fazer login:", str(e)) 
+        return jsonify({"erro": "Erro interno no Servidor", "detalhes": str(e)}), 500  
 def cadastro():
     return render_template('cadastro.html')
 
