@@ -261,6 +261,7 @@
     .info-container {
     display: flex;
     flex-direction: column; /* Garante que as informações fiquem abaixo do ano */
+    left:5px;
     }
 
     .info-container p {
@@ -273,6 +274,12 @@
         margin-left: 10px; /* Adiciona o espaço entre o ano e o ícone */
         font-size: 40px; /* Aumenta o tamanho para médio */
     }
+    .btn-container{
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
     #favoritos-tab {
     display: flex;
     flex-wrap: wrap;
@@ -357,7 +364,11 @@
     object-fit: contain; /* Evita distorções */
     z-index: 2; /* Garante que fique acima do pôster */
     }
-    
+    .classificacao-indicativa-modal{
+    position: relative;
+    width: 50px; /* Mantém um tamanho proporcional */
+    height: 50px;
+    }
     #filmes-encontrados {
     display: flex;
     flex-wrap: wrap; /* 🔹 Permite que os filmes quebrem de linha se necessário */
@@ -368,6 +379,69 @@
     #resultado-pesquisa {
         color: white; 
     }
+    .edit-container {
+    display: none; /* 🔹 Oculto ao carregar a página */
+    flex-direction: column; /* 🔹 Organiza os elementos na vertical */
+    gap: 15px; /* 🔹 Espaço entre os campos */
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    }
+/* 🔹 Espaçamento entre labels e inputs */
+.edit-container label {
+    display: block;
+    color: #ddd;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+/* 🔹 Formatação dos campos de entrada */
+.edit-container input,
+.edit-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: none;
+    background: #333;
+    color: #fff;
+    font-size: 14px;
+}
+
+/* 🔹 Ajuste do textarea para sinopse */
+.edit-container textarea {
+    height: 80px;
+    resize: none;
+}
+
+/* 🔹 Espaçamento dos botões */
+.edit-container .btn-save,
+.edit-container .btn-cancel {
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+/* 🔹 Cores dos botões */
+.btn-save {
+    background: #1e88e5;
+    color: white;
+}
+.btn-save:hover {
+    background: #1565c0; /* 🔹 Tom mais escuro ao passar o mouse */
+}
+.btn-cancel:hover {
+    background: #b71c1c; /* 🔹 Tom mais escuro ao passar o mouse */
+}
+.btn-cancel {
+    background: #d32f2f;
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -609,7 +683,7 @@
 
     </div>
 </div>
-  <div id="modal" class="modal">
+<div id="modal" class="modal" data-id="${filme.idFilme}">
     <div class="modal-content">
         <span class="close-button" onclick="closeModal()">&times;</span>
         <h2 id="modal-title">Título do Filme</h2>
@@ -623,16 +697,39 @@
             </iframe>
         </div>
         <div class="info-container">
-            <p><strong>Ano:</strong> <span id="modal-year"></span>
-                <i class="material-icons">high_quality</i>
+            <p><span id="modal-year" style="font-size: 20px;"></span>
+                <i class="material-icons">hd</i>
             </p>
-            <p><strong>Classificação:</strong> <span id="modal-rating"></span></p>
+            <i id="modal-rating" class="classificacao-indicativa-modal"></i>
             <p><strong>Gêneros:</strong> <span id="modal-genres"></span></p>
         </div>
         <p><strong>Sinopse:</strong> <span id="modal-description"></span></p>
-        <button class="btn-delete btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
-            <i class="material-icons">delete</i>
-        </button>
+        <div class="btn-container">
+            <button id="btn-edit" class="btn-edit btn-floating waves-effect waves-light blue">   
+                <i class="material-icons">edit</i>
+            </button>
+            <button class="btn-delete btn-floating waves-effect waves-light red darken-3" data-id="${filme.idFilme}">   
+                <i class="material-icons">delete</i>
+            </button>
+        </div>
+        <div id="edit-container" class="edit-container">
+            <h3>Editar Filme</h3>
+            <label>Título:</label>
+            <input type="text" id="edit-title">
+        
+            <label>Ano de Lançamento:</label>
+            <input type="number" id="edit-year">
+        
+            <label>Gênero:</label>
+            <input type="text" id="edit-genres">
+        
+            <label>Sinopse:</label>
+            <textarea id="edit-description"></textarea>
+        
+            <button id="save-edit" class="btn-save">Salvar</button>
+            <button id="cancel-edit" class="btn-cancel">Cancelar</button>
+        </div>
+        
     </div>
 </div>
   <script>
@@ -670,7 +767,7 @@
                 const caminhoClassificacao = carregarClassificacao(filme.Classificação);
                 const cardHTML = `
                     <div class="col s2">
-                        <div class="card hoverable">
+                        <div class="card hoverable"  data-id="${filme.idFilme}">
                             <div class="card-image">
                                 <img src="${filme.imagem}" alt="${filme.nomeFilme}">
                                 <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
@@ -687,7 +784,7 @@
                                     <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
                                 </p>
                                 <div class="expand-container">
-                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>
+                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${filme.idFilme})'>
                                     <i class="material-icons">expand_more</i>
                                 </a>
                                 </div>
@@ -801,7 +898,7 @@
                 const caminhoClassificacao = carregarClassificacao(filme.Classificação);
                 const cardHTML = `
                     <div class="col s2">
-                        <div class="card hoverable">
+                        <div class="card hoverable" data-id="${filme.idFilme}">
                             <div class="card-image">
                                 <img src="${filme.imagem}" alt="${filme.nomeFilme}">
                                 <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
@@ -818,7 +915,7 @@
                                     <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
                                 </p>
                                 <div class="expand-container">
-                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>
+                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${filme.idFilme})'>
                                     <i class="material-icons">expand_more</i>
                                 </a>
                                 </div>
@@ -856,7 +953,7 @@
                 const caminhoClassificacao = carregarClassificacao(filme.Classificação);
                 const cardHTML = `
                    <div class="col s2">
-                        <div class="card hoverable">
+                        <div class="card hoverable" data-id="${filme.idFilme}">
                             <div class="card-image">
                                 <img src="${filme.imagem}" alt="${filme.nomeFilme}">
                                 <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
@@ -873,7 +970,7 @@
                                     <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}
                                 </p>
                                 <div class="expand-container">
-                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>
+                                <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${filme.idFilme})'>
                                     <i class="material-icons">expand_more</i>
                                 </a>
                                 </div>
@@ -905,24 +1002,45 @@
             slider.scrollLeft += scrollAmount; // Move para a direita
         }
        }
-       function openModal(filme) {
-        console.log("Modal foi acionado para:", filme);
-        const modal = document.getElementById('modal');
-        modal.style.display = 'flex'; // Exibe o modal
+       
+       async function openModal(filmeId) {
+            if (!filmeId || isNaN(filmeId)) {
+            console.error("❌ Erro: ID do filme inválido!", filmeId);
+            return;
+            }
 
-        // Preenche os dados no modal
-        document.getElementById('modal-title').innerText = filme.nomeFilme || 'Título não encontrado';
-        document.getElementById('modal-description').innerText = filme.Sinopse || 'Sinopse não disponível';
-        document.getElementById('modal-rating').innerText = filme.Classificação || 'Classificação desconhecida';
-        document.getElementById('modal-year').innerText = filme.AnoLanc || 'Ano não disponível';
-        document.getElementById('modal-genres').innerText = filme.Categoria || 'Gêneros não informados';
-        
-        let trailerUrl = filme.Trailer || '';
-        if (trailerUrl.includes('watch?v=')) {
-            trailerUrl = trailerUrl.replace('watch?v=', 'embed/');
-        }
 
-        document.getElementById('modal-trailer').src = trailerUrl;
+
+            try {
+                const response = await fetch(`/filme/${filmeId}`);
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar os detalhes do filme!");
+                }
+
+                const filme = await response.json();
+
+                const modal = document.getElementById("modal");
+                modal.style.display = "flex";
+                modal.setAttribute("data-id", filme.idFilme);
+
+                console.log("✅ Dados do filme carregados com sucesso!");
+                const caminhoClassificacao = carregarClassificacao(filme.Classificação);
+                document.getElementById('modal-rating').style.backgroundImage = `url('${caminhoClassificacao}')`;
+                document.getElementById('modal-rating').classList.add("classificacao-indicativa");
+                document.getElementById("modal-title").innerText = filme.nomeFilme || "Título não encontrado";
+                document.getElementById("modal-description").innerText = filme.Sinopse || "Sinopse não disponível";
+                document.getElementById("modal-year").innerText = filme.AnoLanc || "Ano não disponível";
+                document.getElementById("modal-genres").innerText = filme.Categoria || "Gêneros não informados";
+                
+            
+                let trailerUrl = filme.Trailer || '';
+                if (trailerUrl.includes('watch?v=')) {
+                    trailerUrl = trailerUrl.replace('watch?v=', 'embed/') + '?autoplay=1';
+                }
+                document.getElementById('modal-trailer').src = trailerUrl;
+            } catch (error) {
+                console.error("❌ Erro ao buscar os dados do filme:", error);
+            }
         }
 
         function closeModal() {
@@ -932,46 +1050,173 @@
         }
 
         document.addEventListener("click", async e => {
-    if (e.target.closest(".btn-fav")) {
-        const btn = e.target.closest(".btn-fav");
-        const icon = btn.querySelector("i");
-        const filmeId = btn.getAttribute("data-id"); // ID do filme
-        const usuarioId = localStorage.getItem("usuarioId");
+            const btnDelete = e.target.closest(".btn-delete");
 
-        const isFavorito = icon.innerHTML === "favorite";
-        icon.innerHTML = isFavorito ? "favorite_border" : "favorite";
+            if (btnDelete) {
+                const modal = document.getElementById("modal"); // 🔹 Agora buscamos o ID do modal
+                const filmeId = modal.getAttribute("data-id"); // 🔹 Obtém o ID do filme diretamente do `modal-content`
 
-        // Sincroniza todos os botões com o mesmo ID
-        document.querySelectorAll(`.btn-fav[data-id="${filmeId}"] i`).forEach(otherIcon => {
-            otherIcon.innerHTML = icon.innerHTML;
+                console.log("🗑️ Filme a deletar:", filmeId);
+
+                if (!filmeId || filmeId === "null") {
+                    console.error("❌ Erro: ID do filme inválido!");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/deletarFilme/${filmeId}`, {
+                        method: "DELETE"
+                    });
+
+                    if (response.ok) {
+                        console.log(`✅ Filme ${filmeId} deletado com sucesso!`);
+                        closeModal(); // 🔹 Fecha o modal
+
+                        // 🔹 Remove **todos** os cards do filme na página
+                        const cards = document.querySelectorAll(`.card.hoverable[data-id="${filmeId}"]`);
+                        if (cards.length > 0) {
+                            cards.forEach(card => card.remove()); // 🔹 Agora remove todos os cards do mesmo filme
+                            console.log(`🗑️ Todos os cards do filme ${filmeId} foram removidos!`);
+                        } else {
+                            console.error(`❌ Erro: Nenhum card do filme ${filmeId} encontrado no DOM!`);
+                        }
+                    } else {
+                        console.error("❌ Erro ao deletar filme.");
+                    }
+                } catch (error) {
+                    console.error("❌ Erro na requisição:", error);
+                }
+            }
         });
-       
-        // Envia ao backend
-        try {
-            if (!usuarioId) {
-            console.error("Usuário não logado ou ID não disponível.");
-            alert("Por favor, faça login antes de favoritar filmes.");
-            return;
-        }
-            const response = await fetch("http://localhost:5000/favoritar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ filmeId, usuarioId }) // 🔹 Envia também o usuarioId
-            });
-
-            const data = await response.json();
-            console.log(data.message);
             
-        } catch (error) {
-            console.error("Erro ao favoritar:", error);
+            document.addEventListener("click", e => {
+            const btnEdit = e.target.closest("#btn-edit");
+            if (btnEdit) {
+                console.log("🖊️ Botão Editar clicado!"); // 🔹 Verifique se o clique está funcionando
+
+                const editContainer = document.getElementById("edit-container");
+
+                if (editContainer) {
+                    editContainer.style.display = "flex"; // 🔹 Exibe corretamente o container de edição
+                    console.log("✏️ Modo de edição ativado!");
+
+                    // 🔹 Preenche os campos com os dados atuais do filme
+                    document.getElementById("edit-title").value = document.getElementById("modal-title").innerText;
+                    document.getElementById("edit-year").value = document.getElementById("modal-year").innerText;
+                    document.getElementById("edit-genres").value = document.getElementById("modal-genres").innerText;
+                    document.getElementById("edit-description").value = document.getElementById("modal-description").innerText;
+                } else {
+                    console.error("❌ Erro: `edit-container` não foi encontrado!");
+                }
+            }
+            });
+            document.getElementById("cancel-edit").addEventListener("click", () => {
+            document.getElementById("edit-container").style.display = "none"; // 🔹 Esconde a edição
+            });
+            document.getElementById("save-edit").addEventListener("click", async () => {
+                console.log("📝 Botão salvar foi clicado!");
+
+                const modal = document.getElementById("modal");
+                const filmeId = modal.getAttribute("data-id");
+
+                if (!filmeId) {
+                    console.error("❌ Erro: ID do filme não encontrado!");
+                    return;
+                }
+
+                // 🔹 Captura os elementos do formulário, sem `edit-rating`
+                const editTitle = document.getElementById("edit-title");
+                const editYear = document.getElementById("edit-year");
+                const editGenres = document.getElementById("edit-genres");
+                const editDescription = document.getElementById("edit-description");
+
+                if (!editTitle || !editYear || !editGenres || !editDescription) {
+                    console.error("❌ Erro: Um ou mais campos do formulário de edição não foram encontrados no DOM!");
+                    return;
+                }
+
+                console.log("🎬 Título:", editTitle.value);
+                console.log("📅 Ano:", editYear.value);
+                console.log("🎭 Gênero:", editGenres.value);
+                console.log("📜 Sinopse:", editDescription.value);
+
+                const updatedFilme = {
+                    nomeFilme: editTitle.value,
+                    AnoLanc: editYear.value,
+                    Categoria: editGenres.value,
+                    Sinopse: editDescription.value
+                };
+
+                try {
+                    const response = await fetch(`/editarFilme/${filmeId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedFilme)
+                    });
+
+                    if (response.ok) {
+                        console.log(`✅ Filme ${filmeId} atualizado com sucesso!`);
+
+                        modal.querySelector("#modal-title").innerText = updatedFilme.nomeFilme;
+                        modal.querySelector("#modal-year").innerText = updatedFilme.AnoLanc;
+                        modal.querySelector("#modal-genres").innerText = updatedFilme.Categoria;
+                        modal.querySelector("#modal-description").innerText = updatedFilme.Sinopse;
+
+                        document.querySelectorAll(`.card.hoverable[data-id="${filmeId}"]`).forEach(card => {
+                            card.querySelector(".card-title").innerText = updatedFilme.nomeFilme;
+                            card.querySelector(".valign-wrapper:last-of-type i").nextSibling.textContent = updatedFilme.AnoLanc;
+                        });
+
+                        modal.querySelector("#edit-container").style.display = "none";
+                    } else {
+                        console.error("❌ Erro ao editar filme.");
+                    }
+                } catch (error) {
+                    console.error("❌ Erro na requisição:", error);
+                }
+            });
+                    // LOGICA PAARA FAVORITAR E DESFAVORITAR
+        document.addEventListener("click", async e => {
+        if (e.target.closest(".btn-fav")) {
+            const btn = e.target.closest(".btn-fav");
+            const icon = btn.querySelector("i");
+            const filmeId = btn.getAttribute("data-id"); // ID do filme
+            const usuarioId = localStorage.getItem("usuarioId");
+
+            const isFavorito = icon.innerHTML === "favorite";
+            icon.innerHTML = isFavorito ? "favorite_border" : "favorite";
+
+            // Sincroniza todos os botões com o mesmo ID
+            document.querySelectorAll(`.btn-fav[data-id="${filmeId}"] i`).forEach(otherIcon => {
+                otherIcon.innerHTML = icon.innerHTML;
+            });
+        
+            // Envia ao backend
+            try {
+                if (!usuarioId) {
+                console.error("Usuário não logado ou ID não disponível.");
+                alert("Por favor, faça login antes de favoritar filmes.");
+                return;
+            }
+                const response = await fetch("http://localhost:5000/favoritar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ filmeId, usuarioId }) // 🔹 Envia também o usuarioId
+                });
+
+                const data = await response.json();
+                console.log(data.message);
+                
+            } catch (error) {
+                console.error("Erro ao favoritar:", error);
+            }
         }
-    }
-    });
+        });
     
     window.onload = async function() {
     await carregarFilmes();  // 🔹 Primeiro, carrega os filmes
 
-    setTimeout(async () => { // 🔹 Pequeno delay para garantir que os botões existam no DOM
+    setTimeout(async () => { 
         const usuarioId = localStorage.getItem("usuarioId");
 
         if (!usuarioId) {
@@ -996,13 +1241,13 @@
 
                 if (favoritos.map(String).includes(filmeId)) { 
                     const icon = btn.querySelector("i");
-                    icon.innerHTML = "favorite"; // 🔹 Marca visualmente como favorito
+                    icon.innerHTML = "favorite"; //  Marca visualmente como favorito
                 }
             });
         } catch (error) {
             console.error("Erro ao carregar favoritos:", error);
         }
-    }, 500);  // 🔹 Tempo de 500ms para garantir a existência dos elementos
+    }, 500);
 };
         document.getElementById("search-btn").addEventListener("click", function(event) {
             event.preventDefault(); // 🔹 Evita bugs
@@ -1057,7 +1302,7 @@
 
                         const cardHTML = `  
                             <div class="col s2">  
-                                <div class="card hoverable">  
+                                <div class="card hoverable" data-id="${filme.idFilme}">  
                                     <div class="card-image">  
                                         <img src="${filme.imagem}" alt="${filme.nomeFilme}">  
                                         <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">  
@@ -1074,7 +1319,7 @@
                                             <i class="material-icons">calendar_today</i> ${filme.AnoLanc || 'Ano não disponível'}  
                                         </p>  
                                         <div class="expand-container">  
-                                            <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${JSON.stringify(filme)})'>  
+                                            <a class="btn-floating waves-effect waves-light blue expand-btn" onclick='openModal(${filme.idFilme})'>  
                                                 <i class="material-icons">expand_more</i>  
                                             </a>  
                                         </div>  

@@ -92,6 +92,32 @@ def listar_filmes():
         status=200,
         mimetype='application/json; charset=utf-8'
     )
+@app.route('/filme/<int:filmeId>', methods=['GET'])
+def obter_filme(filmeId):
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        query = "SELECT * FROM Filmes WHERE idFilme = %s"
+        cursor.execute(query, (filmeId,))
+        filme = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if filme:
+            return jsonify(filme), 200
+        else:
+            return jsonify({"erro": "Filme não encontrado!"}), 404
+
+    except Exception as e:
+        print("❌ Erro ao obter filme:", str(e))
+        return jsonify({"erro": "Erro interno no servidor"}), 500
 @app.route('/buscar_filmes', methods=['GET'])
 def buscar_filmes():
     termo_busca = request.args.get('q', '')  
@@ -260,6 +286,62 @@ def cadastrar_filme():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+@app.route('/deletarFilme/<int:filmeId>', methods=['DELETE'])
+def deletar_filme(filmeId):
+    try:
+        print(f"ID recebido para exclusão: {filmeId}")
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor()
+
+        query = "DELETE FROM Filmes WHERE idFilme = %s"
+        cursor.execute(query, (filmeId,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"mensagem": "Filme deletado com sucesso!"}), 200
+
+    except Exception as e:
+        print("Erro ao deletar filme:", str(e))
+        return jsonify({"erro": "Erro interno no servidor"}), 500
+    
+@app.route('/editarFilme/<int:filmeId>', methods=['PUT'])
+def editar_filme(filmeId):
+    try:
+        print(f"ID recebido para edição: {filmeId}")
+        dados = request.json  # 🔹 Obtém os dados enviados pelo frontend
+
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="galaxvideo"
+        )
+        cursor = conn.cursor()
+
+        query = """
+            UPDATE Filmes 
+            SET nomeFilme = %s, AnoLanc = %s, Categoria = %s, Sinopse = %s 
+            WHERE idFilme = %s
+        """
+        cursor.execute(query, (
+            dados["nomeFilme"], dados["AnoLanc"], 
+            dados["Categoria"], dados["Sinopse"], filmeId
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"mensagem": "Filme atualizado com sucesso!"}), 200
+    except Exception as e:
+        print("❌ Erro ao editar filme:", str(e))
+        return jsonify({"erro": "Erro interno no servidor"}), 500    
 @app.route('/filmes-por-genero', methods=['POST'])
 def filmes_por_genero():
     try:
