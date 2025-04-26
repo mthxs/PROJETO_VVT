@@ -342,6 +342,7 @@ def editar_filme(filmeId):
     except Exception as e:
         print("❌ Erro ao editar filme:", str(e))
         return jsonify({"erro": "Erro interno no servidor"}), 500    
+
 @app.route('/filmes-por-genero', methods=['POST'])
 def filmes_por_genero():
     try:
@@ -355,14 +356,18 @@ def filmes_por_genero():
 
         data = request.json
         genero = data.get('genero')
+        id_usuario = data.get('user_id')  # Recebe o ID do usuário no JSON
 
-        # Consulta SQL para buscar filmes pelo gênero escolhido
+        # Consulta SQL para buscar filmes pelo gênero e verificar se são favoritos
         query = """
-            SELECT idFilme, nomeFilme, imagem, Categoria, AnoLanc, Classificação, NotaPublico AS nota
-            FROM filmes
-            WHERE Categoria LIKE %s
+            SELECT f.idFilme, f.nomeFilme, f.imagem, f.Categoria, f.AnoLanc, f.Classificação, f.NotaPublico AS nota,
+                   CASE WHEN EXISTS (
+                       SELECT 1 FROM favoritos fav WHERE fav.filme_id = f.idFilme AND fav.usuario_id = %s
+                   ) THEN 1 ELSE 0 END AS isFavorito
+            FROM filmes f
+            WHERE f.Categoria LIKE %s
         """
-        cursor.execute(query, (genero,))
+        cursor.execute(query, (id_usuario, genero))
         filmes_filtrados = cursor.fetchall()
 
         cursor.close()
@@ -372,6 +377,5 @@ def filmes_por_genero():
     except Exception as e:
         print("Erro ao buscar filmes por gênero:", str(e))
         return jsonify({"erro": "Erro interno no Servidor"}), 500
-    
 if __name__ == '__main__':
     app.run(debug=True)

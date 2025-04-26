@@ -666,7 +666,7 @@
             <option value="comedia">Comédia</option>
             <option value="terror">Terror</option>
             <option value="drama">Drama</option>
-            <option value="ficcao">Ficção Científica</option>
+            <option value="Ficção Cientifica">Ficção Cientifica</option>
             <option value="fantasia">Fantasia</option>
             <option value="romance">Romance</option>
             <option value="documentario">Documentário</option>
@@ -940,7 +940,7 @@
             const response = await fetch("/filmes-por-genero", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ genero: generoSelecionado }) // 🔹 Envia o gênero selecionado para o backend
+                body: JSON.stringify({ genero: generoSelecionado,user_id: usuarioId }) // 🔹 Envia o gênero selecionado para o backend
             });
 
             const filmesFiltrados = await response.json();
@@ -957,7 +957,7 @@
                             <div class="card-image">
                                 <img src="${filme.imagem}" alt="${filme.nomeFilme}">
                                 <button class="btn-fav btn-floating halfway-fab waves-effect waves-light red" data-id="${filme.idFilme}">
-                                    <i class="material-icons">favorite</i>
+                                    <i class="material-icons">${filme.isFavorito ? 'favorite' : 'favorite_border'}</i>
                                 </button>
                                 <i class="classificacao-indicativa" style="background-image: url('${caminhoClassificacao}');"></i>
                             </div>

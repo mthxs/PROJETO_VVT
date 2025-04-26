@@ -138,7 +138,12 @@
           event.preventDefault(); // Impede o envio tradicional do formulário
       
           const formData = new FormData(this);
-      
+          let imagem = formData.get("imagem");
+    
+          if (imagem.includes("/original/")) {
+              formData.set("imagem", imagem.replace("/original/", "/w400/"));
+          }
+
           fetch("/cadastrofilme", {
               method: "POST",
               body: formData
