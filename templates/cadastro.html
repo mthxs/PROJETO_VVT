@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro - Galax Video</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0b0c2a;
+      background-image: url("/static/images/log-cad.png"); 
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .logo {
+      margin-bottom: 5px;
+    }
+
+    .logo img {
+      width: 300px;
+    }
+
+    .cadastro-container {
+      background-color: #0c0a33;
+      padding: 40px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .descricao-menor {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background-color: #1a73e8;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #155ab6;
+    }
+
+    .links {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .links a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="static/images/logo_galax.png" alt="Logo Galax Video" />
+  </div>
+  <div class="cadastro-container">
+    <h2>Crie sua conta</h2>
+    <p class="descricao-menor">Preencha os dados abaixo para se cadastrar no Galax Video.</p>
+    <form id="cadastroForm" method="POST">
+      <input type="text" id="nome" name="nome" placeholder="Nome completo" required />
+      <input type="email" id="email" name="email" placeholder="E-mail" required />
+      <input type="password" id="senha" name="senha"placeholder="Senha" required />
+      <input type="password" name="confirmar_senha" placeholder="Confirme a senha" required />
+      <button type="submit">Cadastrar</button>
+    </form>
+    <div class="links">
+      <p>Já tem uma conta? <a href="/">Entrar</a></p>
+    </div>
+  </div>
+  <script>
+    document.getElementById("cadastroForm").addEventListener("submit", function(event) {
+          event.preventDefault(); // Impede o envio tradicional do formulário
+          
+          const nome = document.getElementById("nome").value;
+          const email = document.getElementById("email").value;
+          const senha = document.getElementById("senha").value;
+          const confirmarSenha = document.querySelector("input[name='confirmar_senha']").value;
+          
+          if(senha.lenght < 8){
+            alert("A senha deve ter pelo menos 8 caracteres.")
+            return;
+          }
+
+          if(senha !== confirmarSenha){
+            alert("As senhas não coincidem.")
+            return;
+          }
+
+          const emailValido = /(gmail\.com|hotmail\.com|outlook\.com|icloud\.com)$/i;
+          if (!emailValido.test(email)) {
+              alert("O e-mail deve terminar com gmail.com, hotmail.com, outlook.com ou icloud.com.");
+              return ;
+          }
+
+
+
+          const formData = new FormData(this);
+          fetch("/cadastro", {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.mensagem) {
+                  alert("Você foi cadastrado com sucesso!");
+                  setTimeout(() => {
+                  window.location.href = "http://localhost:5000/";
+                  }, 500);
+              } else if (data.erro) {
+                  alert("Erro ao cadastrar: " + data.erro);
+              }
+          })
+          .catch(error => {
+              alert("Ocorreu um erro. Tente novamente.");
+              console.error("Erro:", error);
+          });
+      });
+  </script>
+</body>
+</html>

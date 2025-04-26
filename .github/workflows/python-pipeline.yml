@@ -1,9 +1,7 @@
 name: Teste  # Nome do workflow
 
 on:
-  push:
-    branches:
-      - main  # Dispara o workflow ao fazer push na branch main
+  workflow_dispatch:
 
 jobs:
   run-python-script: # executar_py
@@ -19,4 +17,4 @@ jobs:
           python-version: '3.x'  # Escolher a versão desejada do Python
 
       - name: Executar Script Python  # Etapa 3: Rodar o arquivo .py
-        run: python teste.py  # Substituir pelo nome do arquivo Python no repositório
+        run: script.py  # Substituir pelo nome do arquivo Python no repositório
