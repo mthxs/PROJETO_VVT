@@ -35,6 +35,7 @@ def logar():
     except Exception as e:
         print("Erro ao fazer login:", str(e)) 
         return jsonify({"erro": "Erro interno no Servidor", "detalhes": str(e)}), 500  
+@app.route('/cadastrar', methods=['GET'])
 def cadastro():
     return render_template('cadastro.html')
 
@@ -297,6 +298,9 @@ def deletar_filme(filmeId):
             database="galaxvideo"
         )
         cursor = conn.cursor()
+        
+        query_favoritos = "DELETE FROM Favoritos WHERE filme_id = %s"
+        cursor.execute(query_favoritos, (filmeId,))
 
         query = "DELETE FROM Filmes WHERE idFilme = %s"
         cursor.execute(query, (filmeId,))
