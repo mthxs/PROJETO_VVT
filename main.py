@@ -3,6 +3,14 @@ import mysql.connector
 import json
 app = Flask(__name__)
 
+def conneector_banco():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="galaxvideo"
+    )
+
 @app.route('/', methods=['GET'])
 def login():
     return render_template('login.html')
@@ -11,12 +19,7 @@ def logar():
     try:
         email = request.form['email']
         senha = request.form['senha']
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor(dictionary=True)
 
         query = "SELECT * FROM Usuario WHERE Email = %s AND senha = %s"
@@ -43,12 +46,7 @@ def cadastro():
 def cadastrar():
     try:
         print("Dados recebidos:", request.form)
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         print("Conexão bem-sucedida!")
 
         cursor = conn.cursor()
@@ -77,12 +75,7 @@ def index():
 @app.route('/filmes', methods=['GET'])
 def listar_filmes():
     
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="galaxvideo"
-    )
+    conn = conneector_banco() 
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT idFilme, nomeFilme, imagem, Trailer, Categoria, AnoLanc, Sinopse,Classificação, NotaPublico AS nota FROM filmes")
     filmes = cursor.fetchall()
@@ -96,12 +89,7 @@ def listar_filmes():
 @app.route('/filme/<int:filmeId>', methods=['GET'])
 def obter_filme(filmeId):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor(dictionary=True)
 
         query = "SELECT * FROM Filmes WHERE idFilme = %s"
@@ -124,12 +112,7 @@ def buscar_filmes():
     termo_busca = request.args.get('q', '')  
     id_usuario = request.args.get('user_id', '')  
 
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="galaxvideo"
-    )
+    conn = conneector_banco() 
     cursor = conn.cursor(dictionary=True)
 
     # 🔹 Adicionamos `usuario_id` na resposta para verificar o que está sendo processado
@@ -154,12 +137,7 @@ def buscar_filmes():
 @app.route('/favoritar', methods=['POST'])
 def favoritar_filme():
    
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="galaxvideo"
-    )
+    conn = conneector_banco() 
     cursor = conn.cursor()
 
     data = request.json
@@ -184,12 +162,7 @@ def favoritar_filme():
 def meus_favoritos():
 
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor(dictionary=True)
 
         data = request.json
@@ -214,12 +187,7 @@ def meus_favoritos():
 def favoritos_usuario():
 
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor(dictionary=True)
 
         data = request.json
@@ -254,12 +222,7 @@ def cadastrofilme():
 @app.route('/cadastrofilme', methods=['POST'])
 def cadastrar_filme():
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         print("Conexão bem-sucedida!")
 
         cursor = conn.cursor()
@@ -291,12 +254,7 @@ def cadastrar_filme():
 def deletar_filme(filmeId):
     try:
         print(f"ID recebido para exclusão: {filmeId}")
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor()
         
         query_favoritos = "DELETE FROM Favoritos WHERE filme_id = %s"
@@ -321,12 +279,7 @@ def editar_filme(filmeId):
         print(f"ID recebido para edição: {filmeId}")
         dados = request.json  # 🔹 Obtém os dados enviados pelo frontend
 
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor()
 
         query = """
@@ -350,12 +303,7 @@ def editar_filme(filmeId):
 @app.route('/filmes-por-genero', methods=['POST'])
 def filmes_por_genero():
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="galaxvideo"
-        )
+        conn = conneector_banco() 
         cursor = conn.cursor(dictionary=True)
 
         data = request.json
