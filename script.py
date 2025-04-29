@@ -10,5 +10,5 @@ def fetch_cep_data(cep):
         print(f"Erro ao acessar API: {response.status_code}")
 
 if __name__ == "__main__":
-    cep = "80610905"
+    cep = "81010250"
     fetch_cep_data(cep)
