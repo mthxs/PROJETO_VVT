@@ -23,8 +23,8 @@ jobs:
       
     - name: Acess Secret
       run: |
-        echo "API_KEY =${{secrets.API_KEY}}">>$GITHUB_ENV
-        echo "API_URL =${{vars.API_URL}}">>$GITHUB_ENV
+        echo "API_KEY=${{secrets.API_KEY}}" >> $GITHUB_ENV
+        echo "API_URL=${{vars.API_URL}}" >> $GITHUB_ENV
         
     - name: Executar script Python
       run: python codigo.py
