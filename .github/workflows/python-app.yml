@@ -1,0 +1,25 @@
+name: Python application
+
+on:
+  push:
+    branches: [ "development" ]
+  pull_request:
+    branches: [ "development" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Acess Secret
+      run: |
+        echo "API_KEY =${{secrets.API_KEY}}">>$GITHUB_ENV
+        echo "API_URL =${{vars.API_URL}}">>$GITHUB_ENV
+        python codigo.py
+      
