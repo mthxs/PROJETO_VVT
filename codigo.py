@@ -19,4 +19,4 @@ payload = {
 response = requests.post(api_url, json=payload, headers=headers)
 
 print("Status Code:", response.status_code)
-print("Response:", response.text)
+print("Response: ", response.text)
