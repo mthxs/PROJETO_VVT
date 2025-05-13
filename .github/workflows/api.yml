@@ -1,11 +1,9 @@
 name: Run Python Script with API Auth
 
-
 on:
-push:
-branches: [ "*" ]  # Executa em qualquer branch
-workflow_dispatch:    # Permite execução manual
-
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -34,4 +32,4 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           API_SECRET: ${{ secrets.API_SECRET }}
         run: |
-          python codigo.py
+          python main.py
