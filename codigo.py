@@ -8,7 +8,7 @@ cities = [
     "Fortaleza", "Goiânia", "João Pessoa", "Londrina", "Macapá",
     "Maceió", "Manaus", "Natal", "Palmas", "Porto Alegre",
     "Recife", "Ribeirão Preto", "Rio de Janeiro", "Salvador", "Santos",
-    "São Luís", "São Paulo", "Teresina", "Uberlândia", "Vitória"
+    "São Luís", "São Paulo", "Teresina", "Uberlândia", 
 ]
 
 for city in cities:
