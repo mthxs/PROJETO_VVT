@@ -2,7 +2,7 @@ name: Run Python Script with API Auth
 
 on:
   push:
-    branches: [main]
+    branches: [development]
   workflow_dispatch:
 
 jobs:
