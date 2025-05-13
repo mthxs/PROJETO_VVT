@@ -32,4 +32,4 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           API_SECRET: ${{ secrets.API_SECRET }}
         run: |
-          python main.py
+          python codigo.py
