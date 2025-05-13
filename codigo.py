@@ -1,14 +1,14 @@
 import requests, os
 
-api_url = os.getenv("API_URL")
-api_key = os.getenv("API_KEY")
+api_url = "http://api.weatherapi.com/v1/current.json"
+api_key = "66f60971137f45b1be610152251305"
 cities = [
-    "Aracaju", "Belém", "Belo Horizonte", "Boa Vista", "Brasília",
-    "Campinas", "Campo Grande", "Curitiba", "Cuiabá", "Florianópolis",
-    "Fortaleza", "Goiânia", "João Pessoa", "Londrina", "Macapá",
-    "Maceió", "Manaus", "Natal", "Palmas", "Porto Alegre",
-    "Recife", "Ribeirão Preto", "Rio de Janeiro", "Salvador", "Santos",
-    "São Luís", "São Paulo", "Teresina", "Uberlândia", 
+    "Curitiba", "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Brasília", 
+    "Salvador", "Fortaleza", "Manaus", "Porto Alegre", "Recife", 
+    "Belém", "Goiânia", "Campinas", "São Luís", "Maceió", 
+    "Natal", "Teresina", "João Pessoa", "Campo Grande", "Cuiabá", 
+    "Aracaju", "Florianópolis", "Macapá", "Palmas", "Boa Vista", 
+    "Vitória", "Santos", "Uberlândia", "Londrina", "Ribeirão Preto"
 ]
 
 for city in cities:
