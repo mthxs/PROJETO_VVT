@@ -733,12 +733,21 @@
     </div>
 </div>
   <script>
-    // 🔹 Verifica se o usuário ainda está logado
     const usuarioId = localStorage.getItem("usuarioId");
     if (!usuarioId) {
-            window.location.href = "/"; // 🔹 Redireciona para a página de login se não estiver autenticado
+            window.location.href = "/"; //  Redireciona para a página de login se não estiver autenticado
         }
-
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    if (!isAdmin) {
+    document.querySelector('a[href="/cadastrarfilme"]').style.display = "none";
+    }
+    // Esconde botões de editar/apagar nos cards/modal
+    function esconderBotoesAdmin() {
+        if (!isAdmin) {
+        document.querySelectorAll("#btn-edit, .btn-delete").forEach(btn => btn.style.display = "none");
+        }
+    }
+    esconderBotoesAdmin();
     console.log("Usuário logado com ID:", usuarioId);
       function carregarFilmes() {
     fetch('http://localhost:5000/filmes') 

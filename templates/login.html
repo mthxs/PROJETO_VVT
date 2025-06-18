@@ -88,6 +88,26 @@
     .links a:hover {
       text-decoration: underline;
     }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: fit-content; /* Ajusta ao tamanho dos elementos dentro */
+      text-align: left;
+      margin: 0px;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+     margin: 2px; /* Remove qualquer margem extra */
+     padding: 0;
+    }
+
+    .checkbox-container label {
+      font-size: 15px;
+      color: #ccc;
+      cursor: pointer;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -101,10 +121,14 @@
     <form id="loginForm" method="POST">
       <input type="email" id="email" name="email" placeholder="E-mail" required />
       <input type="password" id="senha" name="senha" placeholder="Senha" required />
+      <div class="checkbox-container">
+        <input type="checkbox" id="mostrarSenha">
+        <label for="mostrarSenha">Mostrar senha</label>
+      </div>
       <button type="submit">Entrar</button>
     </form>
     <div class="links">
-      <p><a href="#">Esqueceu a senha?</a></p>
+      <p><a href="/recuperar_senha">Esqueceu a senha?</a></p>
       <p>Não tem uma conta? <a href="/cadastrar">Cadastre-se</a></p>
     </div>
   </div>
@@ -125,7 +149,8 @@
       .then(data => {
         if(data.autenticado){
           alert("Login realizado com sucesso")
-          localStorage.setItem("usuarioId", data.usuarioId); 
+          localStorage.setItem("usuarioId", data.usuarioId);
+          localStorage.setItem("isAdmin", data.isAdmin);
           window.location.href = "/menu";
         } else {
           alert("Email ou senha incorretos. Tente novamente. ")
@@ -136,6 +161,10 @@
           console.error("Erro:", error)
       });
       })
+    document.getElementById("mostrarSenha").addEventListener("change", function() {
+      const senhaInput = document.getElementById("senha");
+      senhaInput.type = this.checked ? "text" : "password";
+    });
   </script>
 </body>
 </html>

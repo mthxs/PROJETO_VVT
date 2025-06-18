@@ -1,8 +1,12 @@
-from flask import Flask, jsonify, render_template, request, redirect
+from flask import Flask, jsonify, render_template, request, redirect, session
 import mysql.connector
 import json
+import random
+from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
 app = Flask(__name__)
-
+app.secret_key = 'MFDAI33312D12332'
 def conneector_banco():
     return mysql.connector.connect(
         host="localhost",
@@ -10,6 +14,17 @@ def conneector_banco():
         password="",
         database="galaxvideo"
     )
+def enviar_email_codigo(destinatario, codigo):
+    remetente = "galaxvideostreming@gmail.com"
+    senha = "cxiq zxog dswo huai"  # Use senha de app do Gmail
+    msg = MIMEText(f"Seu código de recuperação é: {codigo}")
+    msg['Subject'] = "Recuperação de senha - Galax Video"
+    msg['From'] = remetente
+    msg['To'] = destinatario
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(remetente, senha)
+        smtp.send_message(msg)
 
 @app.route('/', methods=['GET'])
 def login():
@@ -27,11 +42,16 @@ def logar():
         cursor.execute(query, valores)
         usuario = cursor.fetchone()
 
+        is_admin = False
+        if usuario:
+            cursor.execute("SELECT 1 FROM admin WHERE usuario_id = %s", (usuario['idUser'],))
+            is_admin = cursor.fetchone() is not None
+
         cursor.close()
         conn.close()
-
+        
         if usuario:
-            return jsonify({"autenticado": True, "usuarioId": usuario['idUser']}), 200
+            return jsonify({"autenticado": True, "usuarioId": usuario['idUser'], "isAdmin": is_admin}), 200
         else:
             return jsonify({"autenticado": False}), 401
 
@@ -41,7 +61,6 @@ def logar():
 @app.route('/cadastrar', methods=['GET'])
 def cadastro():
     return render_template('cadastro.html')
-
 @app.route('/cadastro', methods=['POST'])
 def cadastrar():
     try:
@@ -67,6 +86,67 @@ def cadastrar():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+@app.route('/recuperar_senha', methods=['GET'])
+def recuperar_senha():
+    return render_template('recuperarsenha.html')
+@app.route('/recuperar-senha', methods=['POST'])
+def enviar_codrec():
+    data = request.get_json()
+    email = data.get('email')
+    conn = conneector_banco()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT idUser FROM usuario WHERE Email = %s", (email,))
+    usuario = cursor.fetchone()
+    if not usuario:
+        return jsonify({"sucesso": False}), 200
+    
+    codigo = str(random.randint(100000, 999999))
+    timenow = datetime.now()
+    cursor.execute(
+        "INSERT INTO recuperacao_senha (usuario_id, codigo, criado_em) VALUES (%s, %s, %s)",
+        (usuario['idUser'], codigo, timenow)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    enviar_email_codigo(email, codigo)
+    
+    return jsonify({"sucesso": True}), 200
+@app.route('/verificar-codigo', methods=['POST'])
+def verificar_codigo():
+    data = request.get_json()
+    codigo = data.get('codigo')
+    conn = conneector_banco()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT usuario_id FROM recuperacao_senha
+        WHERE codigo = %s AND criado_em >= (NOW() - INTERVAL 15 MINUTE)
+        ORDER BY criado_em DESC LIMIT 1
+    """, (codigo,))
+    registro = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if registro:
+        session['recupera_usuario_id'] = registro['usuario_id']
+        return jsonify({"sucesso": True})
+    else:
+        return jsonify({"sucesso": False, "erro": "Código inválido ou expirado."})
+@app.route('/nova-senha', methods=['POST'])
+def nova_senha():
+    data = request.get_json()
+    senha = data.get('senha')
+    usuario_id = session.get('recupera_usuario_id')
+    if not usuario_id:
+        return jsonify({"sucesso": False, "erro": "Sessão expirada. Tente novamente."})
+    conn = conneector_banco()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE usuario SET senha = %s WHERE idUser = %s", (senha, usuario_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    session.pop('recupera_usuario_id', None)
+    return jsonify({"sucesso": True})
 @app.route('/menu')
 def index():
     
@@ -329,5 +409,6 @@ def filmes_por_genero():
     except Exception as e:
         print("Erro ao buscar filmes por gênero:", str(e))
         return jsonify({"erro": "Erro interno no Servidor"}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)

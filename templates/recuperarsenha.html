@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recuperar Senha - Galax Video</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0b0c2a;
+      background-image: url("static/images/log-cad.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .logo {
+      text-align: center;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+    .logo img {
+      width: 220px;
+      height: auto;
+    }
+    .login-container {
+      background: #16174aee;
+      max-width: 400px;
+      margin: 40px auto 0 auto;
+      border-radius: 18px;
+      padding: 36px 32px 32px 32px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      text-align: center;
+    }
+    h2 {
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+    .descricao-menor {
+      color: #bfc2e2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border-radius: 7px;
+      border: none;
+      background: #23245a;
+      color: #fff;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #155ab6;
+    }
+    .erro {
+      color: #ff6b6b;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    .links {
+      margin-top: 18px;
+      font-size: 0.95rem;
+    }
+    .links a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="static/images/logo_galax.png" alt="Logo Galax Video" />
+  </div>
+  <div class="login-container">
+    <h2>Recuperar senha</h2>
+    <p class="descricao-menor" id="descricao">Digite seu e-mail para receber um código de recuperação.</p>
+    {% if erro %}<div class="erro">{{ erro }}</div>{% endif %}
+    <form id="recuperarForm" method="POST" autocomplete="off">
+      <input type="email" id="email" name="email" placeholder="E-mail" required />
+      <button type="submit" id="btnEnviar">Enviar código</button>
+    </form>
+    <form id="codigoForm" method="POST" style="display: none;" autocomplete="off">
+      <input type="text" id="codigo" name="codigo" placeholder="Digite o código recebido" required maxlength="6" />
+      <button type="submit" id="btnVerificar">Verificar código</button>
+    </form>
+    <div class="links">
+      <a href="/">Voltar ao login</a>
+    </div>
+  </div>
+  <script>
+    // Simulação do fluxo sem backend (AJAX pode ser usado no real)
+    document.getElementById("recuperarForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+
+    // Envia para o backend para verificar se existe e enviar o código
+    const resposta = await fetch("/recuperar-senha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+    });
+    const data = await resposta.json();
+
+    if (data.sucesso) {
+        document.getElementById("recuperarForm").style.display = "none";
+        document.getElementById("codigoForm").style.display = "block";
+        document.getElementById("descricao").textContent = "Enviamos um código para seu e-mail. Digite-o abaixo para continuar.";
+    } else {
+        // Mostra mensagem de erro
+        document.getElementById("descricao").textContent = "E-mail não encontrado no sistema.";
+        document.getElementById("descricao").style.color = "#ff6b6b";
+    }
+    });
+    document.getElementById("codigoForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const codigo = document.getElementById("codigo").value;
+
+  const resposta = await fetch("/verificar-codigo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ codigo })
+  });
+  const data = await resposta.json();
+
+  if (data.sucesso) {
+    // Troca para o formulário de nova senha
+    document.getElementById("codigoForm").style.display = "none";
+    document.getElementById("descricao").textContent = "Digite sua nova senha.";
+    // Cria o formulário de nova senha dinamicamente
+    const formSenha = document.createElement("form");
+    formSenha.id = "senhaForm";
+    formSenha.innerHTML = `
+      <input type="password" id="novaSenha" placeholder="Nova senha" required />
+      <input type="password" id="repeteSenha" placeholder="Repita a nova senha" required />
+      <button type="submit">Salvar nova senha</button>
+    `;
+    document.querySelector(".login-container").insertBefore(formSenha, document.querySelector(".links"));
+
+    formSenha.addEventListener("submit", async function(ev) {
+      ev.preventDefault();
+      const senha1 = document.getElementById("novaSenha").value;
+      const senha2 = document.getElementById("repeteSenha").value;
+      if (senha1 !== senha2) {
+        document.getElementById("descricao").textContent = "As senhas não coincidem.";
+        document.getElementById("descricao").style.color = "#ff6b6b";
+        return;
+      }
+      const resp = await fetch("/nova-senha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha: senha1 })
+      });
+      const dados = await resp.json();
+      if (dados.sucesso) {
+        document.getElementById("descricao").textContent = "Senha alterada com sucesso! Você pode fazer login.";
+        document.getElementById("descricao").style.color = "#1a73e8";
+        formSenha.style.display = "none";
+      } else {
+        document.getElementById("descricao").textContent = dados.erro || "Erro ao alterar senha.";
+        document.getElementById("descricao").style.color = "#ff6b6b";
+      }
+    });
+  } else {
+    document.getElementById("descricao").textContent = data.erro || "Código inválido ou expirado.";
+    document.getElementById("descricao").style.color = "#ff6b6b";
+  }
+});
+
+  </script>
+</body>
+</html>
