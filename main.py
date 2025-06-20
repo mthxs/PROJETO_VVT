@@ -157,7 +157,7 @@ def listar_filmes():
     
     conn = conneector_banco() 
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT idFilme, nomeFilme, imagem, Trailer, Categoria, AnoLanc, Sinopse,Classificação, NotaPublico AS nota FROM filmes")
+    cursor.execute("SELECT idFilme, nomeFilme, imagem, Trailer, Categoria, AnoLanc, Sinopse,Classificação, NotaPublico AS nota FROM filmes ORDER BY idFilme DESC")
     filmes = cursor.fetchall()
     conn.close()
     

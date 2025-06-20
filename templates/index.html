@@ -112,16 +112,23 @@
         .card-title {
         color: #ffffff;
         font-size: medium;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        line-height: 1.4;
+        height: 2.8em; 
+        white-space: normal;
         }
 
         /* Cor da nota dos filmes */
         .valign-wrapper {
-            color: #ffffff; /* Substitua #yourColor pela cor desejada */
+            color: #ffffff; 
         }
 
         /* Cor do texto da sinopse */
         .card-content p {
-            color: #ffffff; /* Substitua #yourColor pela cor desejada */
+            color: #ffffff;
+            overflow: hidden;
         }
         body {
         background-color: #0A0C1A; /* Alterar para a cor desejada */
@@ -708,7 +715,7 @@
             <button id="btn-edit" class="btn-edit btn-floating waves-effect waves-light blue">   
                 <i class="material-icons">edit</i>
             </button>
-            <button class="btn-delete btn-floating waves-effect waves-light red darken-3" data-id="${filme.idFilme}">   
+            <button id="btn-delete" class="btn-delete btn-floating waves-effect waves-light red darken-3" data-id="${filme.idFilme}">   
                 <i class="material-icons">delete</i>
             </button>
         </div>
