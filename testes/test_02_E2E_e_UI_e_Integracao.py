@@ -77,9 +77,6 @@ def test_e2e_ui_integracao():
     campo_pesquisa.click() 
     digitar_lento(driver.find_element(By.ID, "search-input"), "godzilla 2")
 
-    # ...existing code...
-
-    # Após pesquisar "godzilla 2"
     time.sleep(1)
     cards = driver.find_elements(By.CLASS_NAME, "card")
     primeiro_card_visivel = next(card for card in cards if card.is_displayed())
@@ -99,7 +96,7 @@ def test_e2e_ui_integracao():
 
 
     campo_pesquisa.clear()
-    campo_pesquisa.send_keys(" ")  # Envia espaço
+    campo_pesquisa.send_keys(" ")  
     campo_pesquisa.send_keys("\b")
     time.sleep(1)  
     time.sleep(5)
