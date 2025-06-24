@@ -195,7 +195,6 @@ def buscar_filmes():
     conn = conneector_banco() 
     cursor = conn.cursor(dictionary=True)
 
-    # 🔹 Adicionamos `usuario_id` na resposta para verificar o que está sendo processado
     cursor.execute("""
         SELECT f.idFilme, f.nomeFilme, f.imagem, f.Trailer, f.Categoria, f.AnoLanc, f.Sinopse, f.Classificação, f.NotaPublico AS nota,
                %s AS usuario_id,
@@ -357,7 +356,7 @@ def deletar_filme(filmeId):
 def editar_filme(filmeId):
     try:
         print(f"ID recebido para edição: {filmeId}")
-        dados = request.json  # 🔹 Obtém os dados enviados pelo frontend
+        dados = request.json 
 
         conn = conneector_banco() 
         cursor = conn.cursor()
